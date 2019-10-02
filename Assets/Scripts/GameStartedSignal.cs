@@ -1,6 +1,6 @@
 ﻿using strange.extensions.signal.impl;
 
-namespace DefaultNamespace
+namespace KPI.GalconClone.ClientC
 {
     public class GameStartedSignal : Signal
     {
