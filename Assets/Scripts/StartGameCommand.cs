@@ -10,6 +10,9 @@ namespace KPI.GalconClone.ClientC
 
         private const string PlanetObjectName = "planet";
         
+        [Inject]
+        public PlanetLayoutStore LayoutStore { get; set; }
+        
         public override void Execute()
         {
             Debug.Log("Loading game...");
@@ -48,11 +51,15 @@ namespace KPI.GalconClone.ClientC
             var maxCoordinates = new Vector2(camera.transform.position.x + camera.orthographicSize, camera.transform.position.y + camera.orthographicSize);
             
             var planetCount = 8;
-            foreach (var layoutItem in PlanetLayout.GeneratePlanets(planetCount, size, minCoordinates, maxCoordinates))
+            var layout = PlanetLayout.GeneratePlanets(planetCount, size, minCoordinates, maxCoordinates);
+            LayoutStore.SetPlanetLayout(layout);
+            foreach (var planet in layout)
             {
                 var copy = GameObject.Instantiate(planetBlueprint, game.transform);
-                copy.transform.position = new Vector3(layoutItem.PositionX, layoutItem.PositionY);
+                copy.transform.position = new Vector3(planet.PositionX, planet.PositionY);
                 copy.SetActive(true);
+                var script = copy.GetComponent<PlanetView>();
+                script.Id = planet.Id;
             }
             
             GameObject.Destroy(planetBlueprint);

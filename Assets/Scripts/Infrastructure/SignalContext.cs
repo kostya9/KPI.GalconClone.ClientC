@@ -1,6 +1,7 @@
 ﻿
 using strange.extensions.command.api;
 using strange.extensions.command.impl;
+using strange.extensions.context.api;
 using strange.extensions.context.impl;
 using strange.extensions.signal.impl;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace KPI.GalconClone.ClientC
         /**
          * Constructor
          */
-        public SignalContext (MonoBehaviour contextView) : base(contextView) {
+        public SignalContext (MonoBehaviour contextView, ContextStartupFlags flags) : base(contextView, flags) {
         }
  
         protected override void addCoreComponents() {
@@ -22,6 +23,7 @@ namespace KPI.GalconClone.ClientC
             // bind signal command binder
             injectionBinder.Unbind<ICommandBinder>();
             injectionBinder.Bind<ICommandBinder>().To<SignalCommandBinder>().ToSingleton();
+            injectionBinder.Bind<PlanetLayoutStore>().ToSingleton();
 
         }
     
