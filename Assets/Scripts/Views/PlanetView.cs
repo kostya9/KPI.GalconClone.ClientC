@@ -21,14 +21,14 @@ namespace KPI.GalconClone.ClientC
             var planet = Store.GetPlanetLayout().Find(Id);
             if (_uiSelected != planet.Selected)
             {
-                var renderer = GetComponent<Image>();
+                var imageComponent = GetComponent<Image>();
                 if (planet.Selected)
                 {
-                    renderer.color = Color.blue;
+                    imageComponent.color = Color.blue;
                 }
                 else
                 {
-                    renderer.color = Color.white;
+                    imageComponent.color = Color.white;
                 }
 
                 _uiSelected = planet.Selected;
