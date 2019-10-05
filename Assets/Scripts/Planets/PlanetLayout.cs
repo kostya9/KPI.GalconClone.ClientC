@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Random = System.Random;
+using Random = UnityEngine.Random;
 
 namespace KPI.GalconClone.ClientC
 {
@@ -48,25 +48,24 @@ namespace KPI.GalconClone.ClientC
         
         public static PlanetLayout GeneratePlanets(int count, Vector2 size, Vector2 minCoordinates, Vector2 maxCoordinates)
         {
-            var random = new Random();
             var generated = new List<Planet>();
             
             for (int i = 0; i < count; i++)
             {
-                var planet = CreatePlanet(size, minCoordinates, maxCoordinates, random, generated);
+                var planet = CreatePlanet(size, minCoordinates, maxCoordinates, generated);
                 generated.Add(planet);
             }
             
             return new PlanetLayout(generated);
         }
 
-        private static Planet CreatePlanet(Vector2 size, Vector2 minCoordinates, Vector2 maxCoordinates, Random r, IEnumerable<Planet> generated)
+        private static Planet CreatePlanet(Vector2 size, Vector2 minCoordinates, Vector2 maxCoordinates, IEnumerable<Planet> generated)
         {
             const int maxAttempts = 50;
             for (var attempt = 1; attempt < maxAttempts; attempt++)
             {
-                var x = (float) r.NextDouble(minCoordinates.x + size.y / 2, maxCoordinates.x - size.x / 2);
-                var y = (float) r.NextDouble(minCoordinates.y + size.y / 2, maxCoordinates.y - size.x / 2);
+                var x = Random.Range(minCoordinates.x + size.y / 2, maxCoordinates.x - size.x / 2);
+                var y = Random.Range(minCoordinates.y + size.y / 2, maxCoordinates.y - size.x / 2);
                 var layoutItem = new Planet(x, y);
                 
                 if (!IntersectsWithAny(layoutItem, generated, size))

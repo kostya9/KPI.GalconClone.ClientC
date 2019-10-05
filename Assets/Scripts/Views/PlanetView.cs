@@ -1,9 +1,12 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
 
 namespace KPI.GalconClone.ClientC
 {
-    public class PlanetView : BaseView
+    public class PlanetView : BaseView, IPointerClickHandler
     {
         [SerializeField]
         public Guid Id;
@@ -12,25 +15,13 @@ namespace KPI.GalconClone.ClientC
         public PlanetLayoutStore Store { get; set; }
 
         private bool _uiSelected;
-
-        private void OnMouseDown()
-        {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                Store.GetPlanetLayout().SelectMultiple(Id);
-            }
-            else
-            {
-                Store.GetPlanetLayout().SelectSingle(Id);
-            }
-        }
-
+        
         private void Update()
         {
             var planet = Store.GetPlanetLayout().Find(Id);
             if (_uiSelected != planet.Selected)
             {
-                var renderer = GetComponent<SpriteRenderer>();
+                var renderer = GetComponent<Image>();
                 if (planet.Selected)
                 {
                     renderer.color = Color.blue;
@@ -41,6 +32,18 @@ namespace KPI.GalconClone.ClientC
                 }
 
                 _uiSelected = planet.Selected;
+            }
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                Store.GetPlanetLayout().SelectMultiple(Id);
+            }
+            else
+            {
+                Store.GetPlanetLayout().SelectSingle(Id);
             }
         }
     }
