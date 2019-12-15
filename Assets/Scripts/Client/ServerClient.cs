@@ -93,6 +93,30 @@ namespace Assets.Scripts.Client
             Send(msg);
         }
 
+        public void SendSelect(int[] planetIds, int percentage)
+        {
+            var msg = new { name = "select", from = planetIds, percentage = percentage};
+            Send(msg);
+        }
+
+        public void SendMove(int unitId, double x, double y)
+        {
+            var msg = new { name = "move", unit_id = unitId, x = x, y = y };
+            Send(msg);
+        }
+
+        public void SendAddHp(int planetId, int hpCount = 1)
+        {
+            var msg = new { name = "add_hp", planet_id = planetId, hp_count = hpCount };
+            Send(msg);
+        }
+
+        public void SendDamage(int planetId, int unitId, int hpCount = 1)
+        {
+            var msg = new { name = "damage", planet_id = planetId, unit_id = unitId, hp_count = hpCount };
+            Send(msg);
+        }
+
         private void Send(object o)
         {
             var writer = new BinaryWriter(_stream);
