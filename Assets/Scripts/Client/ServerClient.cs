@@ -13,16 +13,24 @@ namespace Assets.Scripts.Client
         [Inject] public PlayerConnected PlayerConnectedSignal { get; set; }
         [Inject] public MapGenerated MapGeneratedSignal { get; set; }
         [Inject] public GameStarted GameStartedSignal { get; set; }
+        [Inject] public PlayerReady PlayerReadySignal { get; set; }
+        [Inject] public PlanetSelected PlanetSelectedSignal { get; set; }
+        [Inject] public UnitMoved UnitMovedSignal { get; set; }
+        [Inject] public HpAdded HpAddedSignal { get; set; }
+        [Inject] public DamageDone DamageDoneSignal { get; set; }
+        [Inject] public GameOver GameOverSignal { get; set; }
 
         private int? _curClientId;
 
         private readonly TcpClient _client;
         private readonly NetworkStream _stream;
+        private readonly BinaryWriter _writer;
 
         private ServerClient(TcpClient client)
         {
             _client = client;
             _stream = _client.GetStream();
+            _writer = new BinaryWriter(_stream);
         }
 
         public void StartDispatchingEvents()
@@ -76,8 +84,39 @@ namespace Assets.Scripts.Client
 
                     PlayerConnectedSignal.Dispatch(args);
                 } break;
-
-
+                case "ready":
+                {
+                    var args = jobject.ToObject<PlayerReadyArgs>();
+                    PlayerReadySignal.Dispatch(args);
+                } break;
+                case "select":
+                {
+                    
+                    var args = jobject.ToObject<PlanetSelectedArgs>();
+                    PlanetSelectedSignal.Dispatch(args);
+                } break;
+                case "move":
+                {
+                    var args = jobject.ToObject<UnitMovedArgs>();
+                    UnitMovedSignal.Dispatch(args);
+                }
+                break;
+                case "add_hp":
+                {
+                    var args = jobject.ToObject<HpAddedArgs>();
+                    HpAddedSignal.Dispatch(args);
+                } break;
+                case "damage":
+                {
+                    var args = jobject.ToObject<DamageDoneArgs>();
+                    DamageDoneSignal.Dispatch(args);
+                }
+                break;
+                case "gameover":
+                {
+                    var args = jobject.ToObject<GameOverArgs>();
+                    GameOverSignal.Dispatch(args);
+                } break;
             }
         }
 
@@ -119,12 +158,14 @@ namespace Assets.Scripts.Client
 
         private void Send(object o)
         {
-            var writer = new BinaryWriter(_stream);
             var serialized = JsonConvert.SerializeObject(o);
             var bytes = ToBytes(serialized);
-            writer.Write(bytes.Length);
-            writer.Write(bytes);
-            writer.Flush();
+            lock (_writer)
+            {
+                _writer.Write(bytes.Length);
+                _writer.Write(bytes);
+                _writer.Flush();
+            }
             LogSent(serialized);
         }
             
