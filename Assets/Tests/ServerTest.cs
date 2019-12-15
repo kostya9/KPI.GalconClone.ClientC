@@ -1,32 +1,52 @@
 ﻿using System.Collections;
 using System.Threading;
-using System.Threading.Tasks;
 using Assets.Scripts.Client;
 using NUnit.Framework;
-using UnityEngine;
 using UnityEngine.TestTools;
 
 namespace Tests
 {
     public class ServerTest
     {
-        // A Test behaves as an ordinary method
+        // Run only when server is started
         [Test]
-        public void ServerTestSimplePasses()
+        public void InitsMapWhenReady()
         {
-            var client1 = ServerClient.Init("127.0.0.1", 10800);
-            var client2 = ServerClient.Init("127.0.0.1", 10800);
-            client1.SendReady();
-            client2.SendReady();
-            Thread.Sleep(5_000);
-            client1.Dispose();
-            client2.Dispose();
+            using (var client1 = InitClient())
+            using (var client2 = InitClient())
+            {
+                MapContent map = null;
+                var gameStartedCount = 0;
+                var mapGeneratedCount = 0;
+
+                client1.MapGeneratedSignal.AddListener((received) => { mapGeneratedCount++; map = received; }) ;
+                client1.GameStartedSignal.AddListener(() => gameStartedCount++);
+                client1.StartDispatchingEvents();
+
+                client2.MapGeneratedSignal.AddListener((_) => mapGeneratedCount++);
+                client2.GameStartedSignal.AddListener(() => gameStartedCount++);
+                client2.StartDispatchingEvents();
+
+                client1.SendReady();
+                client2.SendReady();
+                Thread.Sleep(500);
+                Assert.AreEqual(2, mapGeneratedCount);
+                Assert.NotNull(map?.Map);
+
+                client1.SendRendered();
+                client2.SendRendered();
+                Thread.Sleep(500);
+                Assert.AreEqual(2, gameStartedCount);
+            }
         }
 
-        [Test]
-        public void A()
+        private ServerClient InitClient()
         {
-            Assert.True(true);
+            var client = ServerClient.Init("127.0.0.1", 10800);
+            client.MapGeneratedSignal = new MapGenerated();
+            client.GameStartedSignal = new GameStarted();
+            client.PlayerConnectedSignal = new PlayerConnected();
+            return client;
         }
 
         // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use

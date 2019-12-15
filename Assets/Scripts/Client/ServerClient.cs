@@ -10,7 +10,9 @@ namespace Assets.Scripts.Client
 {
     public class ServerClient : IDisposable
     {
-        [Inject] MapGenerated MapGeneratedSignal { get; set; }
+        [Inject] public PlayerConnected PlayerConnectedSignal { get; set; }
+        [Inject] public MapGenerated MapGeneratedSignal { get; set; }
+        [Inject] public GameStarted GameStartedSignal { get; set; }
 
         private readonly TcpClient _client;
         private readonly NetworkStream _stream;
@@ -19,31 +21,66 @@ namespace Assets.Scripts.Client
         {
             _client = client;
             _stream = _client.GetStream();
+        }
+
+        public void StartDispatchingEvents()
+        {
             ThreadPool.QueueUserWorkItem((_) => ReadData());
         }
 
         private void ReadData()
         {
             Debug.Log("Started receiving data from server...");
-            var reader = new BinaryReader(_stream);
             while (_client.Connected)
             {
-                if (!_stream.DataAvailable)
+                if (_stream == null || !_stream.DataAvailable)
                 {
                     continue;
                 }
 
+                var reader = new BinaryReader(_stream);
                 var size = reader.ReadInt32();
                 var message = reader.ReadBytes(size);
                 var received = FromBytes(message);
                 var jobject = JObject.Parse(received);
                 LogReceived(jobject);
+                HandleReceived(jobject);
+            }
+        }
+
+        private void HandleReceived(JObject jobject)
+        {
+            switch(jobject.Value<string>("name"))
+            {
+                //case "player_init"
+                // No player init event in server. (bug?)
+                case "mapinit":
+                {
+                    var args = jobject.ToObject<MapContent>();
+                    MapGeneratedSignal.Dispatch(args);
+                } break;
+                case "game_started":
+                    GameStartedSignal.Dispatch();
+                    break;
+                case "connect":
+                {
+                    var args = jobject.ToObject<PlayerConnectedArgs>();
+                    PlayerConnectedSignal.Dispatch(args);
+                } break;
+
+
             }
         }
 
         public void SendReady()
         {
             var msg = new { name = "ready", ready = true };
+            Send(msg);
+        }
+
+        public void SendRendered()
+        {
+            var msg = new { name = "rendered" };
             Send(msg);
         }
 
@@ -57,7 +94,7 @@ namespace Assets.Scripts.Client
             writer.Flush();
             LogSent(serialized);
         }
-
+            
         private byte[] ToBytes(string input)
             => System.Text.Encoding.UTF8.GetBytes(input);
 
