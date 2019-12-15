@@ -11,10 +11,15 @@ namespace Assets.Scripts.Client
     {
     }
 
-    public class PlayerConnectedArgs
+    public class Player
     {
         public int Id { get; set; }
 
         public bool Ready { get; set; }
+    }
+
+    public class PlayerConnectedArgs
+    {
+        public Player Player { get; set; }
     }
 }

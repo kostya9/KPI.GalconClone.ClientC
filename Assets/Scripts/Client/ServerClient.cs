@@ -14,6 +14,8 @@ namespace Assets.Scripts.Client
         [Inject] public MapGenerated MapGeneratedSignal { get; set; }
         [Inject] public GameStarted GameStartedSignal { get; set; }
 
+        private int? _curClientId;
+
         private readonly TcpClient _client;
         private readonly NetworkStream _stream;
 
@@ -42,8 +44,9 @@ namespace Assets.Scripts.Client
                 var size = reader.ReadInt32();
                 var message = reader.ReadBytes(size);
                 var received = FromBytes(message);
+                LogReceived(received);
+
                 var jobject = JObject.Parse(received);
-                LogReceived(jobject);
                 HandleReceived(jobject);
             }
         }
@@ -65,6 +68,12 @@ namespace Assets.Scripts.Client
                 case "connect":
                 {
                     var args = jobject.ToObject<PlayerConnectedArgs>();
+
+                    if (!_curClientId.HasValue)
+                    {
+                        _curClientId = args.Player.Id;
+                    }
+
                     PlayerConnectedSignal.Dispatch(args);
                 } break;
 
@@ -103,12 +112,12 @@ namespace Assets.Scripts.Client
 
         private void LogReceived<T>(T received)
         {
-            Debug.Log($"Received '{received}' from server.");
+            Debug.Log($"[client {_curClientId}] Received '{received}' from server.");
         }
 
         private void LogSent<T>(T sent)
         {
-            Debug.Log($"Sent '{sent}' to server.");
+            Debug.Log($"[client {_curClientId}] Sent '{sent}' to server.");
         }
 
         public static ServerClient Init(string address, int port)
