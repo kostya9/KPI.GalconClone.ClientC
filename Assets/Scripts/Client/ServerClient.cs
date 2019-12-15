@@ -25,32 +25,33 @@ namespace Assets.Scripts.Client
         private readonly TcpClient _client;
         private readonly NetworkStream _stream;
         private readonly BinaryWriter _writer;
+        private readonly BinaryReader _reader;
 
         private ServerClient(TcpClient client)
         {
             _client = client;
             _stream = _client.GetStream();
             _writer = new BinaryWriter(_stream);
+            _reader = new BinaryReader(_stream);
         }
 
         public void StartDispatchingEvents()
         {
-            ThreadPool.QueueUserWorkItem((_) => ReadData());
+            ThreadPool.QueueUserWorkItem((_) => ReadAndHandleEvents());
         }
 
-        private void ReadData()
+        private void ReadAndHandleEvents()
         {
             Debug.Log("Started receiving data from server...");
             while (_client.Connected)
             {
-                if (_stream == null || !_stream.DataAvailable)
+                if (!_stream.DataAvailable)
                 {
                     continue;
                 }
 
-                var reader = new BinaryReader(_stream);
-                var size = reader.ReadInt32();
-                var message = reader.ReadBytes(size);
+                var size = _reader.ReadInt32();
+                var message = _reader.ReadBytes(size);
                 var received = FromBytes(message);
                 LogReceived(received);
 
