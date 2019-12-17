@@ -29,6 +29,7 @@ namespace Tests
 
                 client1.SendReady();
                 client2.SendReady();
+
                 Thread.Sleep(500);
                 Assert.AreEqual(2, mapGeneratedCount);
                 Assert.NotNull(map?.Map);
@@ -46,6 +47,11 @@ namespace Tests
             client.MapGeneratedSignal = new MapGenerated();
             client.GameStartedSignal = new GameStarted();
             client.PlayerConnectedSignal = new PlayerConnected();
+            client.PlayerInitializedSignal = new PlayerInitialized();
+            client.HpAddedSignal = new HpAdded();
+            client.GameOverSignal = new GameOver();
+            client.DamageDoneSignal = new DamageDone();
+            client.PlayerReadySignal = new PlayerReady();
             return client;
         }
 

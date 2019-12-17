@@ -19,6 +19,7 @@ namespace Assets.Scripts.Client
         [Inject] public HpAdded HpAddedSignal { get; set; }
         [Inject] public DamageDone DamageDoneSignal { get; set; }
         [Inject] public GameOver GameOverSignal { get; set; }
+        [Inject] public PlayerInitialized PlayerInitializedSignal { get; set; }
 
         private int? _curClientId;
 
@@ -50,14 +51,22 @@ namespace Assets.Scripts.Client
                     continue;
                 }
 
-                var size = _reader.ReadInt32();
-                var message = _reader.ReadBytes(size);
-                var received = FromBytes(message);
-                LogReceived(received);
+                try
+                {
+                    var size = _reader.ReadInt32();
+                    var message = _reader.ReadBytes(size);
+                    var received = FromBytes(message);
+                    LogReceived(received);
 
-                var jobject = JObject.Parse(received);
-                HandleReceived(jobject);
+                    var jobject = JObject.Parse(received);
+                    HandleReceived(jobject);
+                }
+                catch(Exception e)
+                {
+                    Debug.LogError($"Failed to process server message due to exception: {e}");
+                }
             }
+            Debug.Log("Connection closed. Stopped receiving.");
         }
 
         private void HandleReceived(JObject jobject)
@@ -77,14 +86,15 @@ namespace Assets.Scripts.Client
                 case "connect":
                 {
                     var args = jobject.ToObject<PlayerConnectedArgs>();
-
-                    if (!_curClientId.HasValue)
-                    {
-                        _curClientId = args.Player.Id;
-                    }
-
                     PlayerConnectedSignal.Dispatch(args);
                 } break;
+                case "player_init":
+                {
+                    var args = jobject.ToObject<PlayerInitializedArgs>();
+                    _curClientId = args.Id;
+                    PlayerInitializedSignal.Dispatch(args);
+                }
+                break;
                 case "ready":
                 {
                     var args = jobject.ToObject<PlayerReadyArgs>();
@@ -178,12 +188,12 @@ namespace Assets.Scripts.Client
 
         private void LogReceived<T>(T received)
         {
-            Debug.Log($"[client {_curClientId}] Received '{received}' from server.");
+            Debug.Log($"[{DateTime.Now}][client {_curClientId}] Received '{received}' from server.");
         }
 
         private void LogSent<T>(T sent)
         {
-            Debug.Log($"[client {_curClientId}] Sent '{sent}' to server.");
+            Debug.Log($"[{DateTime.Now}][client {_curClientId}] Sent '{sent}' to server.");
         }
 
         public static ServerClient Init(string address, int port)
