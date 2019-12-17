@@ -24,7 +24,9 @@ namespace KPI.GalconClone.ClientC
         protected override void addCoreComponents() {
             base.addCoreComponents();
 
-            // bind signal command binder
+            // bind signal command binder 
+            // make sure all commands from signals are executed on the main thread
+            // Because signals can be triggered from server communicating thread
             injectionBinder.Bind<MainThreadCommandExecutor>().To(new MainThreadCommandExecutor());
             injectionBinder.Unbind<ICommandBinder>();
             injectionBinder.Bind<ICommandBinder>().To<SignalCommandBinder>().ToSingleton();
