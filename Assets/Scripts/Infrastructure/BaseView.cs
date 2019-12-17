@@ -76,9 +76,17 @@ namespace KPI.GalconClone.ClientC
         /// By default, raises an Exception if no Context is found.
         virtual protected void bubbleToContext(MonoBehaviour view, BubbleType type, bool finalTry)
         {
-            IContext context = Bootstrapper.Instance.context;
+            IContext context = Bootstrapper.Instance?.context;
 
-            bool success = true;
+            if(context == null)
+            {
+                if(finalTry)
+                {
+                    Debug.LogError("Context is null");
+                }
+
+                return;
+            }
 
             switch (type)
             {
@@ -90,15 +98,8 @@ namespace KPI.GalconClone.ClientC
                     context.RemoveView(view);
                     break;
                 default:
-                    success = false;
                     break;
-            }
-
-            if (success)
-            {
-                return;
-            }
-                    
+            }    
         }
 
         public bool shouldRegister { get { return enabled && gameObject.activeInHierarchy; } }
