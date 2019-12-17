@@ -62,11 +62,15 @@ using strange.framework.api;
 using strange.extensions.injector.impl;
 using strange.extensions.signal.impl;
 using strange.extensions.signal.api;
+using Assets.Scripts.Infrastructure;
 
 namespace strange.extensions.command.impl
 {
 	public class SignalCommandBinder : CommandBinder
 	{
+		[Inject]
+		public MainThreadCommandExecutor CommandExecutor { get; set; }
+
 		override public void ResolveBinding(IBinding binding, object key)
 		{
 			base.ResolveBinding(binding, key);
@@ -97,8 +101,16 @@ namespace strange.extensions.command.impl
 			ICommand command = createCommandForSignal(cmd, data, signal.GetTypes()); //Special signal-only command creation
 			command.sequenceId = depth;
 			trackCommand(command, binding);
-			executeCommand(command);
+			executeCommandOnMain(command);
 			return command;
+		}
+
+		private void executeCommandOnMain(ICommand command)
+		{
+			if(command != null)
+			{
+				CommandExecutor.ExecuteOnMainThread(command).GetAwaiter().GetResult();
+			}
 		}
 
 		/// Create a Command and bind its injectable parameters to the Signal types

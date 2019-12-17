@@ -9,7 +9,7 @@ namespace KPI.GalconClone.ClientC
     public class PlanetView : BaseView, IPointerClickHandler
     {
         [SerializeField]
-        public Guid Id;
+        public int Id;
 
         [Inject]
         public PlanetLayoutStore Store { get; set; }

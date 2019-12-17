@@ -1,4 +1,5 @@
-﻿using strange.extensions.context.api;
+﻿using Assets.Scripts.Infrastructure;
+using strange.extensions.context.api;
 using strange.extensions.context.impl;
 
 namespace KPI.GalconClone.ClientC
@@ -7,6 +8,9 @@ namespace KPI.GalconClone.ClientC
     {
         public static Bootstrapper Instance => _instance;
         private static Bootstrapper _instance;
+
+        [Inject]
+        public MainThreadCommandExecutor executor { get; set; }
 
         public Bootstrapper()
         {
@@ -21,6 +25,12 @@ namespace KPI.GalconClone.ClientC
         {    
             this.context = new SignalContext(this, ContextStartupFlags.MANUAL_LAUNCH);
             context.Launch();
+            context.AddView(this);
+        }
+
+        private void Update()
+        {
+            while (executor.ExecuteNextTask()) ;
         }
     }
 }

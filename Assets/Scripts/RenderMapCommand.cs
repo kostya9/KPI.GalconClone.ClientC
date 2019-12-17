@@ -1,22 +1,33 @@
-﻿using System.Resources;
+﻿using Assets.Scripts.Client;
+using KPI.GalconClone.ClientC;
 using strange.extensions.command.impl;
+using System.Linq;
 using UnityEngine;
 
-namespace KPI.GalconClone.ClientC
+namespace Assets.Scripts
 {
-    public class StartGameCommand : Command
+    public class RenderMapCommand : Command
     {
         private const string Path = "Prefabs/Game";
 
         private const string PlanetObjectName = "Planet";
-        
+
         [Inject]
-        public PlanetLayoutStore LayoutStore { get; set; }
-        
+        public MapContent Map { get; set; }
+
+        [Inject]
+        public PlanetLayoutStore Store {get;set;}
+
         public override void Execute()
         {
             Debug.Log("Loading game...");
-            
+
+            var planets = Map.Map
+                .Select(u => new Planet(u.Id, u.Owner, new Vector2(u.Coords.X, u.Coords.Y), u.Type, u.UnitsCount));
+
+            var layout = new PlanetLayout(planets);
+            Store.SetPlanetLayout(layout);
+
             var gameResource = Resources.Load<GameObject>(Path);
             if (gameResource is null)
             {
@@ -24,7 +35,7 @@ namespace KPI.GalconClone.ClientC
                 Fail();
                 return;
             }
-            
+
             var game = GameObject.Instantiate(gameResource);
             var planetBlueprint = game.GetDirectChildByName(PlanetObjectName);
 
@@ -36,7 +47,7 @@ namespace KPI.GalconClone.ClientC
             }
 
             var blueprintRectTransform = planetBlueprint.GetComponent<RectTransform>();
-            
+
             var gameCanvas = game.GetComponent<Canvas>();
 
             if (gameCanvas is null)
@@ -46,24 +57,25 @@ namespace KPI.GalconClone.ClientC
                 return;
             }
 
-            var size = blueprintRectTransform.rect.width * planetBlueprint.transform.localScale * 1.5f; // Make more space between planets
-            var minCoordinates = new Vector2(0, 0);
-            var maxCoordinates = new Vector2(gameCanvas.pixelRect.width, gameCanvas.pixelRect.height);
-            
-            var planetCount = 8;
-            var layout = PlanetLayout.GeneratePlanets(planetCount, size, minCoordinates, maxCoordinates);
-            LayoutStore.SetPlanetLayout(layout);
+            var serverScreen = new Vector2(1920, 960);
+            var clientScreen = new Vector2(gameCanvas.pixelRect.width, gameCanvas.pixelRect.height);
+            var delta = serverScreen / 2;
+            var scaleFactor = clientScreen / serverScreen;
+            var planetWidth = clientScreen.y / 15;
+
             foreach (var planet in layout)
             {
                 var copy = GameObject.Instantiate(planetBlueprint, game.transform);
-                copy.transform.position = new Vector3(planet.PositionX, planet.PositionY);
+                var transform = (copy.transform as RectTransform);
+                transform.position = scaleFactor * (planet.Position + delta);
+                transform.sizeDelta = new Vector2(planetWidth, planetWidth);
                 copy.SetActive(true);
                 var script = copy.GetComponent<PlanetView>();
                 script.Id = planet.Id;
             }
-            
+
             GameObject.Destroy(planetBlueprint);
-            
+
             Debug.Log("Game loaded.");
         }
     }

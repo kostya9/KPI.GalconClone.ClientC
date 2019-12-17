@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using strange.extensions.signal.impl;
 using System;
 using System.IO;
 using System.Net.Sockets;
@@ -10,16 +11,17 @@ namespace Assets.Scripts.Client
 {
     public class ServerClient : IDisposable
     {
-        [Inject] public PlayerConnected PlayerConnectedSignal { get; set; }
+        // Add [Inject] as soon as signal should be used
+        public PlayerConnected PlayerConnectedSignal { get; set; }
         [Inject] public MapGenerated MapGeneratedSignal { get; set; }
-        [Inject] public GameStarted GameStartedSignal { get; set; }
-        [Inject] public PlayerReady PlayerReadySignal { get; set; }
-        [Inject] public PlanetSelected PlanetSelectedSignal { get; set; }
-        [Inject] public UnitMoved UnitMovedSignal { get; set; }
-        [Inject] public HpAdded HpAddedSignal { get; set; }
-        [Inject] public DamageDone DamageDoneSignal { get; set; }
-        [Inject] public GameOver GameOverSignal { get; set; }
-        [Inject] public PlayerInitialized PlayerInitializedSignal { get; set; }
+        public GameStarted GameStartedSignal { get; set; }
+        public PlayerReady PlayerReadySignal { get; set; }
+        public PlanetSelected PlanetSelectedSignal { get; set; }
+        public UnitMoved UnitMovedSignal { get; set; }
+        public HpAdded HpAddedSignal { get; set; }
+        public DamageDone DamageDoneSignal { get; set; }
+        public GameOver GameOverSignal { get; set; }
+        public PlayerInitialized PlayerInitializedSignal { get; set; }
 
         private int? _curClientId;
 
@@ -28,7 +30,7 @@ namespace Assets.Scripts.Client
         private readonly BinaryWriter _writer;
         private readonly BinaryReader _reader;
 
-        private ServerClient(TcpClient client)
+        public ServerClient(TcpClient client)
         {
             _client = client;
             _stream = _client.GetStream();
@@ -78,55 +80,55 @@ namespace Assets.Scripts.Client
                 case "mapinit":
                 {
                     var args = jobject.ToObject<MapContent>();
-                    MapGeneratedSignal.Dispatch(args);
+                    MapGeneratedSignal?.Dispatch(args);
                 } break;
                 case "game_started":
-                    GameStartedSignal.Dispatch();
+                    GameStartedSignal?.Dispatch();
                     break;
                 case "connect":
                 {
                     var args = jobject.ToObject<PlayerConnectedArgs>();
-                    PlayerConnectedSignal.Dispatch(args);
+                    PlayerConnectedSignal?.Dispatch(args);
                 } break;
                 case "player_init":
                 {
                     var args = jobject.ToObject<PlayerInitializedArgs>();
                     _curClientId = args.Id;
-                    PlayerInitializedSignal.Dispatch(args);
+                    PlayerInitializedSignal?.Dispatch(args);
                 }
                 break;
                 case "ready":
                 {
                     var args = jobject.ToObject<PlayerReadyArgs>();
-                    PlayerReadySignal.Dispatch(args);
+                    PlayerReadySignal?.Dispatch(args);
                 } break;
                 case "select":
                 {
                     
                     var args = jobject.ToObject<PlanetSelectedArgs>();
-                    PlanetSelectedSignal.Dispatch(args);
+                    PlanetSelectedSignal?.Dispatch(args);
                 } break;
                 case "move":
                 {
                     var args = jobject.ToObject<UnitMovedArgs>();
-                    UnitMovedSignal.Dispatch(args);
+                    UnitMovedSignal?.Dispatch(args);
                 }
                 break;
                 case "add_hp":
                 {
                     var args = jobject.ToObject<HpAddedArgs>();
-                    HpAddedSignal.Dispatch(args);
+                    HpAddedSignal?.Dispatch(args);
                 } break;
                 case "damage":
                 {
                     var args = jobject.ToObject<DamageDoneArgs>();
-                    DamageDoneSignal.Dispatch(args);
+                    DamageDoneSignal?.Dispatch(args);
                 }
                 break;
                 case "gameover":
                 {
                     var args = jobject.ToObject<GameOverArgs>();
-                    GameOverSignal.Dispatch(args);
+                    GameOverSignal?.Dispatch(args);
                 } break;
             }
         }
@@ -169,7 +171,7 @@ namespace Assets.Scripts.Client
 
         private void Send(object o)
         {
-            var serialized = JsonConvert.SerializeObject(o);
+            var serialized = JsonConvert.SerializeObject(o, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             var bytes = ToBytes(serialized);
             lock (_writer)
             {

@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace KPI.GalconClone.ClientC
 {
     public class PlanetLayout : IEnumerable<Planet>
     {
-        private readonly Dictionary<Guid, Planet> _planets;
+        private readonly Dictionary<int, Planet> _planets;
 
-        private PlanetLayout(IEnumerable<Planet> planets)
+        public PlanetLayout(IEnumerable<Planet> planets)
         {
             _planets = planets.ToDictionary(p => p.Id);
         }
 
-        public void SelectSingle(Guid id)
+        public void SelectSingle(int id)
         {
             foreach (var planet in _planets.Values)
             {
@@ -24,7 +22,7 @@ namespace KPI.GalconClone.ClientC
             }
         }
         
-        public void SelectMultiple(Guid id)
+        public void SelectMultiple(int id)
         {
             var planet = Find(id); 
             planet.Selected = !planet.Selected;
@@ -38,55 +36,12 @@ namespace KPI.GalconClone.ClientC
             }
         }
 
-        public Planet Find(Guid id)
+        public Planet Find(int id)
         {
             if (_planets.TryGetValue(id, out var planet))
                 return planet;
 
             return null;
-        }
-        
-        public static PlanetLayout GeneratePlanets(int count, Vector2 size, Vector2 minCoordinates, Vector2 maxCoordinates)
-        {
-            var generated = new List<Planet>();
-            
-            for (int i = 0; i < count; i++)
-            {
-                var planet = CreatePlanet(size, minCoordinates, maxCoordinates, generated);
-                generated.Add(planet);
-            }
-            
-            return new PlanetLayout(generated);
-        }
-
-        private static Planet CreatePlanet(Vector2 size, Vector2 minCoordinates, Vector2 maxCoordinates, IEnumerable<Planet> generated)
-        {
-            const int maxAttempts = 50;
-            for (var attempt = 1; attempt < maxAttempts; attempt++)
-            {
-                var x = Random.Range(minCoordinates.x + size.y / 2, maxCoordinates.x - size.x / 2);
-                var y = Random.Range(minCoordinates.y + size.y / 2, maxCoordinates.y - size.x / 2);
-                var layoutItem = new Planet(x, y);
-                
-                if (!IntersectsWithAny(layoutItem, generated, size))
-                {
-                    return layoutItem;
-                }
-            }
-            
-            throw new InvalidOperationException($"Could not generate a position for planet in {maxAttempts} attemts");
-        }
-
-        private static bool IntersectsWithAny(Planet planet, IEnumerable<Planet> generated, Vector2 size)
-        {
-            foreach (var generatedItem in generated)
-            {
-                if (Math.Abs(planet.PositionX - generatedItem.PositionX) < size.x
-                    && Math.Abs(planet.PositionY - generatedItem.PositionY) < size.y)
-                    return true;
-            }
-
-            return false;
         }
 
         public IEnumerator<Planet> GetEnumerator()

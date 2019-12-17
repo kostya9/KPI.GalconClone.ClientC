@@ -209,6 +209,7 @@ namespace strange.extensions.command.impl
 			{
 				return;
 			}
+
 			command.Execute ();
 		}
 
