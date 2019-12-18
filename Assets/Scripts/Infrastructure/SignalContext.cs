@@ -2,6 +2,7 @@
 using Assets.Scripts;
 using Assets.Scripts.Client;
 using Assets.Scripts.Infrastructure;
+using Assets.Scripts.Players;
 using strange.extensions.command.api;
 using strange.extensions.command.impl;
 using strange.extensions.context.api;
@@ -32,7 +33,7 @@ namespace KPI.GalconClone.ClientC
             injectionBinder.Bind<ICommandBinder>().To<SignalCommandBinder>().ToSingleton();
 
             injectionBinder.Bind<PlanetLayoutStore>().ToSingleton();
-
+            injectionBinder.Bind<PlayerTable>().ToSingleton();
 
             // Bind communication with server
             injectionBinder.Bind<TcpClient>().To(new TcpClient("127.0.0.1", 10800));

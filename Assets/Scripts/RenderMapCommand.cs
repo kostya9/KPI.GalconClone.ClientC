@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Client;
+using Assets.Scripts.Players;
 using KPI.GalconClone.ClientC;
 using strange.extensions.command.impl;
 using System.Linq;
@@ -17,6 +18,9 @@ namespace Assets.Scripts
 
         [Inject]
         public PlanetLayoutStore Store {get;set;}
+
+        [Inject]
+        public PlayerTable Players { get; set; }
 
         public override void Execute()
         {
@@ -69,12 +73,15 @@ namespace Assets.Scripts
                 var transform = (copy.transform as RectTransform);
                 transform.position = scaleFactor * (planet.Position + delta);
                 transform.sizeDelta = new Vector2(planetWidth, planetWidth);
-                copy.SetActive(true);
                 var script = copy.GetComponent<PlanetView>();
-                script.Id = planet.Id;
+                script.Planet = planet;
+                script.Player = planet.OwnerId.HasValue ? Players.Add(planet.OwnerId.Value) : null;
+                copy.SetActive(true);
             }
 
             GameObject.Destroy(planetBlueprint);
+
+            gameCanvas.worldCamera = Camera.main;
 
             Debug.Log("Game loaded.");
         }
