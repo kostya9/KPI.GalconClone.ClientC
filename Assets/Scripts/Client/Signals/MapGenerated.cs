@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Assets.Scripts.Planets;
+using Newtonsoft.Json;
 using strange.extensions.signal.impl;
 
 namespace Assets.Scripts.Client
@@ -12,14 +13,6 @@ namespace Assets.Scripts.Client
         public MapUnit[] Map { get; set; }
     }
 
-    public enum MapUnitType
-    {
-        SMALL = 1,
-        MEDIUM = 2,
-        BIG = 3,
-        BIGGEST = 4
-    }
-
     public class MapPoint
     {
         public float X { get; set; }
@@ -29,7 +22,7 @@ namespace Assets.Scripts.Client
 
     public class MapUnit
     {
-        public MapUnitType Type { get; set; }
+        public PlanetType Type { get; set; }
 
         [JsonProperty(PropertyName = "units_count")]
         public int UnitsCount { get; set; }

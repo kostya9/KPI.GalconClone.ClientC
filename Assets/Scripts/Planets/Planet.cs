@@ -1,26 +1,28 @@
-﻿using Assets.Scripts.Client;
-using System;
+﻿using Assets.Scripts;
+using Assets.Scripts.Planets;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace KPI.GalconClone.ClientC
 {
     public class Planet
     {
-        public Planet(int id, int? ownerId, Vector2 position, Assets.Scripts.Client.MapUnitType type, int unitsCount)
+        public Planet(int id, [CanBeNull]Player owner, Vector2 position, PlanetType type, int unitsCount)
         {
             Position = position;
             Type = type;
             UnitsCount = unitsCount;
             Id = id;
-            OwnerId = ownerId;
+            Owner = owner;
         }
         
         public int Id { get; }
 
-        public int? OwnerId { get; }
+        [CanBeNull]
+        public Player Owner { get; }
 
         public Vector2 Position { get; }
-        public MapUnitType Type { get; }
+        public PlanetType Type { get; }
         public int UnitsCount { get; }
         public bool Selected { get; set; }
     }

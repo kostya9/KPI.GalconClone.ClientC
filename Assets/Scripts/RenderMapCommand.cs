@@ -22,12 +22,23 @@ namespace Assets.Scripts
         [Inject]
         public PlayerTable Players { get; set; }
 
+        private Planet ToPlanet(MapUnit u)
+        {
+            var coords = new Vector2(u.Coords.X, u.Coords.Y);
+
+            var owner = u.Owner.HasValue
+                ? Players.Add(u.Owner.Value)
+                : null;
+
+            return new Planet(u.Id, owner, coords, u.Type, u.UnitsCount);
+        }
+
         public override void Execute()
         {
             Debug.Log("Loading game...");
 
             var planets = Map.Map
-                .Select(u => new Planet(u.Id, u.Owner, new Vector2(u.Coords.X, u.Coords.Y), u.Type, u.UnitsCount));
+                .Select(ToPlanet);
 
             var layout = new PlanetLayout(planets);
             Store.SetPlanetLayout(layout);
@@ -75,7 +86,6 @@ namespace Assets.Scripts
                 transform.sizeDelta = new Vector2(planetWidth, planetWidth);
                 var script = copy.GetComponent<PlanetView>();
                 script.Planet = planet;
-                script.Player = planet.OwnerId.HasValue ? Players.Add(planet.OwnerId.Value) : null;
                 copy.SetActive(true);
             }
 

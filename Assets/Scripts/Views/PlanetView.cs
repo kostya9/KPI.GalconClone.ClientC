@@ -1,8 +1,5 @@
-﻿using Assets.Scripts;
-using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 using Image = UnityEngine.UI.Image;
 
 namespace KPI.GalconClone.ClientC
@@ -14,8 +11,6 @@ namespace KPI.GalconClone.ClientC
 
         [Inject]
         public PlanetLayoutStore Store { get; set; }
-
-        public Player Player { get; set; }
 
         private bool _uiSelected;
 
@@ -59,13 +54,13 @@ namespace KPI.GalconClone.ClientC
         {
             switch (planet.Type)
             {
-                case Assets.Scripts.Client.MapUnitType.MEDIUM:
+                case Assets.Scripts.Planets.PlanetType.MEDIUM:
                     return initialSize * 1.2f;
-                case Assets.Scripts.Client.MapUnitType.BIG:
+                case Assets.Scripts.Planets.PlanetType.BIG:
                     return initialSize * 1.5f;
-                case Assets.Scripts.Client.MapUnitType.BIGGEST:
+                case Assets.Scripts.Planets.PlanetType.BIGGEST:
                     return initialSize * 1.7f;
-                case Assets.Scripts.Client.MapUnitType.SMALL:
+                case Assets.Scripts.Planets.PlanetType.SMALL:
                 default:
                     return initialSize;
             }
@@ -75,12 +70,13 @@ namespace KPI.GalconClone.ClientC
         {
             var imageComponent = GetComponent<Image>();
 
-            if (Player != null)
+            var owner = Planet.Owner;
+            if (owner != null)
             {
-                if(Player.Color != imageComponent.color)
+                if(owner.Color != imageComponent.color)
                 {
                     Debug.Log("Setting player color");
-                    imageComponent.color = Player.Color;
+                    imageComponent.color = owner.Color;
                 }
             }
 
