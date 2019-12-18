@@ -1,6 +1,6 @@
 ﻿using Assets.Scripts.Client;
 using KPI.GalconClone.ClientC;
-using UnityEngine;
+using Assets.Scripts.Config;
 
 public class ServerCommunication : BaseView
 {
@@ -15,7 +15,7 @@ public class ServerCommunication : BaseView
         client.StartDispatchingEvents();
         client.SendReady();
 
-        clientTest = ServerClient.Init("127.0.0.1", 10800);
+        clientTest = ServerClient.Init(Server.Address, Server.Port);
         clientTest.SendReady();
     }
 

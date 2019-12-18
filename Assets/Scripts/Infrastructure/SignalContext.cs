@@ -1,6 +1,7 @@
 ﻿
 using Assets.Scripts;
 using Assets.Scripts.Client;
+using Assets.Scripts.Config;
 using Assets.Scripts.Infrastructure;
 using Assets.Scripts.Players;
 using strange.extensions.command.api;
@@ -36,7 +37,7 @@ namespace KPI.GalconClone.ClientC
             injectionBinder.Bind<PlayerTable>().ToSingleton();
 
             // Bind communication with server
-            injectionBinder.Bind<TcpClient>().To(new TcpClient("127.0.0.1", 10800));
+            injectionBinder.Bind<TcpClient>().To(new TcpClient(Server.Address, Server.Port));
             injectionBinder.Bind<ServerClient>().ToSingleton();
         }
     
