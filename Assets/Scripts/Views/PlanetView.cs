@@ -85,8 +85,10 @@ namespace KPI.GalconClone.ClientC
 
         private void InitPlanetHealthText()
         {
+            _uiHealth = _planet.UnitsCount;
+
             _healthText = GetComponentInChildren<TextMeshProUGUI>();
-            _healthText.text = _planet.UnitsCount.ToString();
+            _healthText.text = _uiHealth.ToString();
             _healthText.rectTransform.sizeDelta = _rectTransform.sizeDelta;
             _healthText.alignment = TextAlignmentOptions.Center;
             _healthText.fontSize = _rectTransform.sizeDelta.x / 3;
