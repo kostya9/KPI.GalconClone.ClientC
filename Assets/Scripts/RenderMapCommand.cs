@@ -87,7 +87,7 @@ namespace Assets.Scripts
                 transform.position = scaleFactor * (planet.Position + delta);
                 transform.sizeDelta = new Vector2(planetWidth, planetWidth);
                 var script = copy.GetComponent<PlanetView>();
-                script.Planet = planet;
+                script.SetPlanet(planet);
                 script.enabled = true;
                 copy.SetActive(true);
             }

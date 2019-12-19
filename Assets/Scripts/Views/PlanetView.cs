@@ -8,7 +8,7 @@ namespace KPI.GalconClone.ClientC
     [RequireComponent(typeof(LineRenderer))]
     public class PlanetView : BaseView, IPointerClickHandler
     {
-        public Planet Planet { get; set; }
+        private Planet _planet;
         
         [Inject]
         public PlanetLayoutStore Store { get; set; }
@@ -25,11 +25,16 @@ namespace KPI.GalconClone.ClientC
             InitPlanetHealthText();
         }
 
+        public void SetPlanet(Planet planet)
+        {
+            _planet = planet;
+        }
+
         private void Update()
         {
             var imageComponent = GetComponent<Image>();
 
-            var owner = Planet.Owner;
+            var owner = _planet.Owner;
             if (owner != null)
             {
                 if(owner.Color != imageComponent.color)
@@ -39,11 +44,11 @@ namespace KPI.GalconClone.ClientC
                 }
             }
 
-            if (_uiSelected != Planet.Selected)
+            if (_uiSelected != _planet.Selected)
             {
                 var lineRenderer = GetComponent<LineRenderer>();
                 
-                if (Planet.Selected)
+                if (_planet.Selected)
                 {
                     lineRenderer.enabled = true;
                 }
@@ -52,7 +57,7 @@ namespace KPI.GalconClone.ClientC
                     lineRenderer.enabled = false;
                 }
 
-                _uiSelected = Planet.Selected;
+                _uiSelected = _planet.Selected;
             }
         }
 
@@ -60,18 +65,18 @@ namespace KPI.GalconClone.ClientC
         {
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                Store.GetPlanetLayout().SelectMultiple(Planet.Id);
+                Store.GetPlanetLayout().SelectMultiple(_planet.Id);
             }
             else
             {
-                Store.GetPlanetLayout().SelectSingle(Planet.Id);
+                Store.GetPlanetLayout().SelectSingle(_planet.Id);
             }
         }
 
         private void InitPlanetHealthText()
         {
             var textComp = GetComponentInChildren<TextMeshProUGUI>();
-            textComp.text = Planet.UnitsCount.ToString();
+            textComp.text = _planet.UnitsCount.ToString();
             textComp.rectTransform.sizeDelta = _rectTransform.sizeDelta;
             textComp.alignment = TextAlignmentOptions.Center;
             textComp.fontSize = _rectTransform.sizeDelta.x / 3;
@@ -106,7 +111,7 @@ namespace KPI.GalconClone.ClientC
         private void InitSizeAccordingToPlanetType()
         {
             _rectTransform = transform as RectTransform;
-            var newSize = GetSize(Planet, _rectTransform.sizeDelta.x);
+            var newSize = GetSize(_planet, _rectTransform.sizeDelta.x);
             _rectTransform.sizeDelta = new Vector2(newSize, newSize);
         }
 
