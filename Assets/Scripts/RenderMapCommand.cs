@@ -72,7 +72,7 @@ namespace Assets.Scripts
                 return;
             }
 
-            var serverScreen = new Vector2(1920, 960); // with border
+            var serverScreen = new Vector2(1920, 960);
             var clientScreen = new Vector2(gameCanvas.pixelRect.width, gameCanvas.pixelRect.height);
             var planetWidth = clientScreen.y / 12;
 

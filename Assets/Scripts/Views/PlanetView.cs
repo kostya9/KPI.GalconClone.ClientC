@@ -1,7 +1,5 @@
-﻿using Assets.Scripts.GUIExtensions;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using Image = UnityEngine.UI.Image;
 using TMPro;
 
@@ -16,7 +14,6 @@ namespace KPI.GalconClone.ClientC
         public PlanetLayoutStore Store { get; set; }
 
         private bool _uiSelected;
-        private Text _healthText;
         private RectTransform _rectTransform;
 
         protected override void Start()
