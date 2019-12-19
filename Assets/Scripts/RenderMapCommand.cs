@@ -74,10 +74,9 @@ namespace Assets.Scripts
 
             var serverScreen = new Vector2(1920, 960);
             var clientScreen = new Vector2(gameCanvas.pixelRect.width, gameCanvas.pixelRect.height);
-            var planetWidth = clientScreen.y / 12;
 
-            // Add a border
-            var scaleFactor = clientScreen / (serverScreen + new Vector2(planetWidth, planetWidth));
+            var planetWidth = clientScreen.y / 12;
+            var scaleFactor = clientScreen / serverScreen;
             var delta = serverScreen / 2;
 
             foreach (var planet in layout)
