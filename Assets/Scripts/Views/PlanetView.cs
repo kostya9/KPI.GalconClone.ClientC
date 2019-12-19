@@ -2,6 +2,7 @@
 using UnityEngine.EventSystems;
 using Image = UnityEngine.UI.Image;
 using TMPro;
+using Assets.Scripts.GuiExtensions;
 
 namespace KPI.GalconClone.ClientC
 {
@@ -14,7 +15,10 @@ namespace KPI.GalconClone.ClientC
         public PlanetLayoutStore Store { get; set; }
 
         private bool _uiSelected;
+        private int _uiHealth;
+
         private RectTransform _rectTransform;
+        private TextMeshProUGUI _healthText;
 
         protected override void Start()
         {
@@ -59,6 +63,12 @@ namespace KPI.GalconClone.ClientC
 
                 _uiSelected = _planet.Selected;
             }
+
+            if(_uiHealth != _planet.UnitsCount)
+            {
+                _healthText.text = _planet.UnitsCount.ToString();
+                _uiHealth = _planet.UnitsCount;
+            }
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -75,37 +85,21 @@ namespace KPI.GalconClone.ClientC
 
         private void InitPlanetHealthText()
         {
-            var textComp = GetComponentInChildren<TextMeshProUGUI>();
-            textComp.text = _planet.UnitsCount.ToString();
-            textComp.rectTransform.sizeDelta = _rectTransform.sizeDelta;
-            textComp.alignment = TextAlignmentOptions.Center;
-            textComp.fontSize = _rectTransform.sizeDelta.x / 3;
+            _healthText = GetComponentInChildren<TextMeshProUGUI>();
+            _healthText.text = _planet.UnitsCount.ToString();
+            _healthText.rectTransform.sizeDelta = _rectTransform.sizeDelta;
+            _healthText.alignment = TextAlignmentOptions.Center;
+            _healthText.fontSize = _rectTransform.sizeDelta.x / 3;
         }
 
-        private void SetupSelectionCircle(float lineWidth = 3, int vertexCount = 100)
+        private void SetupSelectionCircle()
         {
             var lineRenderer = GetComponent<LineRenderer>();
-
-            lineRenderer.loop = true;
-            var t = (transform as RectTransform);
-            var radius = t.sizeDelta.x / 2;
-            lineRenderer.widthMultiplier = lineWidth;
-
-            float deltaTheta = (2f * Mathf.PI) / vertexCount;
-            float theta = 0f;
-
-            lineRenderer.positionCount = vertexCount;
-            for (int i = 0; i < lineRenderer.positionCount; i++)
-            {
-                Vector3 pos = new Vector3(radius * Mathf.Cos(theta), radius * Mathf.Sin(theta), -1f);
-                lineRenderer.SetPosition(i, pos);
-                theta += deltaTheta;
-            }
-
             Material whiteDiffuseMat = new Material(Shader.Find("Unlit/Texture"));
             lineRenderer.material = whiteDiffuseMat;
-
             lineRenderer.enabled = false;
+
+            LineRendererHelper.DrawCircle(lineRenderer, _rectTransform.sizeDelta.x / 2);
         }
 
         private void InitSizeAccordingToPlanetType()
