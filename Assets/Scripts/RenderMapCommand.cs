@@ -74,9 +74,11 @@ namespace Assets.Scripts
 
             var serverScreen = new Vector2(1920, 960);
             var clientScreen = new Vector2(gameCanvas.pixelRect.width, gameCanvas.pixelRect.height);
+            var planetWidth = clientScreen.y / 12;
+
+            // Add a border
+            var scaleFactor = clientScreen / (serverScreen + new Vector2(planetWidth, planetWidth));
             var delta = serverScreen / 2;
-            var scaleFactor = clientScreen / serverScreen;
-            var planetWidth = clientScreen.y / 15;
 
             foreach (var planet in layout)
             {
@@ -85,7 +87,8 @@ namespace Assets.Scripts
                 transform.position = scaleFactor * (planet.Position + delta);
                 transform.sizeDelta = new Vector2(planetWidth, planetWidth);
                 var script = copy.GetComponent<PlanetView>();
-                script.Planet = planet;
+                script.SetPlanet(planet);
+                script.enabled = true;
                 copy.SetActive(true);
             }
 

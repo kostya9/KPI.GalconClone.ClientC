@@ -1,21 +1,91 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using Image = UnityEngine.UI.Image;
+using TMPro;
 
 namespace KPI.GalconClone.ClientC
 {
     [RequireComponent(typeof(LineRenderer))]
     public class PlanetView : BaseView, IPointerClickHandler
     {
-        public Planet Planet { get; set; }
-
+        private Planet _planet;
+        
         [Inject]
         public PlanetLayoutStore Store { get; set; }
 
         private bool _uiSelected;
+        private RectTransform _rectTransform;
 
-        private void SetupCircle(LineRenderer lineRenderer, float lineWidth = 3, int vertexCount = 100)
+        protected override void Start()
         {
+            base.Start();
+
+            InitSizeAccordingToPlanetType();
+            SetupSelectionCircle();
+            InitPlanetHealthText();
+        }
+
+        public void SetPlanet(Planet planet)
+        {
+            _planet = planet;
+        }
+
+        private void Update()
+        {
+            var imageComponent = GetComponent<Image>();
+
+            var owner = _planet.Owner;
+            if (owner != null)
+            {
+                if(owner.Color != imageComponent.color)
+                {
+                    Debug.Log("Setting player color");
+                    imageComponent.color = owner.Color;
+                }
+            }
+
+            if (_uiSelected != _planet.Selected)
+            {
+                var lineRenderer = GetComponent<LineRenderer>();
+                
+                if (_planet.Selected)
+                {
+                    lineRenderer.enabled = true;
+                }
+                else
+                {
+                    lineRenderer.enabled = false;
+                }
+
+                _uiSelected = _planet.Selected;
+            }
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                Store.GetPlanetLayout().SelectMultiple(_planet.Id);
+            }
+            else
+            {
+                Store.GetPlanetLayout().SelectSingle(_planet.Id);
+            }
+        }
+
+        private void InitPlanetHealthText()
+        {
+            var textComp = GetComponentInChildren<TextMeshProUGUI>();
+            textComp.text = _planet.UnitsCount.ToString();
+            textComp.rectTransform.sizeDelta = _rectTransform.sizeDelta;
+            textComp.alignment = TextAlignmentOptions.Center;
+            textComp.fontSize = _rectTransform.sizeDelta.x / 3;
+        }
+
+        private void SetupSelectionCircle(float lineWidth = 3, int vertexCount = 100)
+        {
+            var lineRenderer = GetComponent<LineRenderer>();
+
             lineRenderer.loop = true;
             var t = (transform as RectTransform);
             var radius = t.sizeDelta.x / 2;
@@ -34,20 +104,15 @@ namespace KPI.GalconClone.ClientC
 
             Material whiteDiffuseMat = new Material(Shader.Find("Unlit/Texture"));
             lineRenderer.material = whiteDiffuseMat;
+
+            lineRenderer.enabled = false;
         }
 
-
-        protected override void Start()
+        private void InitSizeAccordingToPlanetType()
         {
-            base.Start();
-
-            var rectTransform = transform as RectTransform;
-            var newSize = GetSize(Planet, rectTransform.sizeDelta.x);
-            rectTransform.sizeDelta = new Vector2(newSize, newSize);
-
-            var lineRenderer = GetComponent<LineRenderer>();
-            SetupCircle(lineRenderer);
-            lineRenderer.enabled = false;
+            _rectTransform = transform as RectTransform;
+            var newSize = GetSize(_planet, _rectTransform.sizeDelta.x);
+            _rectTransform.sizeDelta = new Vector2(newSize, newSize);
         }
 
         private float GetSize(Planet planet, float initialSize)
@@ -63,49 +128,6 @@ namespace KPI.GalconClone.ClientC
                 case Assets.Scripts.Planets.PlanetType.SMALL:
                 default:
                     return initialSize;
-            }
-        }
-
-        private void Update()
-        {
-            var imageComponent = GetComponent<Image>();
-
-            var owner = Planet.Owner;
-            if (owner != null)
-            {
-                if(owner.Color != imageComponent.color)
-                {
-                    Debug.Log("Setting player color");
-                    imageComponent.color = owner.Color;
-                }
-            }
-
-            if (_uiSelected != Planet.Selected)
-            {
-                var lineRenderer = GetComponent<LineRenderer>();
-                
-                if (Planet.Selected)
-                {
-                    lineRenderer.enabled = true;
-                }
-                else
-                {
-                    lineRenderer.enabled = false;
-                }
-
-                _uiSelected = Planet.Selected;
-            }
-        }
-
-        public void OnPointerClick(PointerEventData eventData)
-        {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                Store.GetPlanetLayout().SelectMultiple(Planet.Id);
-            }
-            else
-            {
-                Store.GetPlanetLayout().SelectSingle(Planet.Id);
             }
         }
     }
