@@ -12,7 +12,7 @@ namespace Assets.Scripts.Client
     public class ServerClient : IDisposable
     {
         // Add [Inject] as soon as signal should be used
-        public PlayerConnected PlayerConnectedSignal { get; set; }
+        [Inject] public PlayerConnected PlayerConnectedSignal { get; set; }
         [Inject] public MapGenerated MapGeneratedSignal { get; set; }
         public GameStarted GameStartedSignal { get; set; }
         public PlayerReady PlayerReadySignal { get; set; }

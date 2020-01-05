@@ -45,10 +45,19 @@ namespace KPI.GalconClone.ClientC
             base.mapBindings();
  
             commandBinder.Bind<MapGenerated>().To<RenderMapCommand>();
+            commandBinder.Bind<PlayerConnected>().To<PlayerConnectCommand>();
         }
 
         public override void Launch() {
             base.Launch();
+        }
+    }
+
+    public class PlayerConnectCommand : Command
+    {
+        public override void Execute()
+        {
+            Debug.Log("CONNECTED!!!!!");
         }
     }
 }
