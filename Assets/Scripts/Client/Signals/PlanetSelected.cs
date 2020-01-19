@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using strange.extensions.signal.impl;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.Client
 {
@@ -9,12 +10,7 @@ namespace Assets.Scripts.Client
 
     public class PlanetSelectedArgs
     {
-        public SelectedPlanets Selected { get; set; }
-    }
-
-    public class SelectedPlanets
-    {
-        [JsonProperty(PropertyName = "planet_id")]
-        public int[] PlanetIds { get; set; }
+        [JsonProperty(PropertyName = "selected")]
+        public Dictionary<string, int[]> unitsAndPlanetsIds { get; set; }
     }
 }

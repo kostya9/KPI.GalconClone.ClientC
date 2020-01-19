@@ -34,6 +34,7 @@ namespace KPI.GalconClone.ClientC
             injectionBinder.Bind<ICommandBinder>().To<SignalCommandBinder>().ToSingleton();
 
             injectionBinder.Bind<PlanetLayoutStore>().ToSingleton();
+            injectionBinder.Bind<UnitLayoutStore>().ToSingleton();
             injectionBinder.Bind<PlayerTable>().ToSingleton();
 
             // Bind communication with server
@@ -45,6 +46,7 @@ namespace KPI.GalconClone.ClientC
             base.mapBindings();
  
             commandBinder.Bind<MapGenerated>().To<RenderMapCommand>();
+            commandBinder.Bind<PlanetSelected>().To<RenderUnitsCommand>();
         }
 
         public override void Launch() {

@@ -12,6 +12,7 @@ namespace Assets.Scripts
         private const string Path = "Prefabs/Game";
 
         private const string PlanetObjectName = "Planet";
+        private const string TriangleObjectName = "Triangle";
 
         [Inject]
         public MapContent Map { get; set; }
@@ -91,8 +92,10 @@ namespace Assets.Scripts
                 copy.SetActive(true);
             }
 
-            GameObject.Destroy(planetBlueprint);
+            GameObject triangleBlueprint = game.GetDirectChildByName(TriangleObjectName);
+            triangleBlueprint.SetActive(false);
 
+            GameObject.Destroy(planetBlueprint);
             gameCanvas.worldCamera = Camera.main;
 
             Debug.Log("Game loaded.");
