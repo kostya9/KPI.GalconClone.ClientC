@@ -13,10 +13,15 @@ public class ServerCommunication : BaseView
     {
         base.Start();
         client.StartDispatchingEvents();
-        client.SendReady();
 
         clientTest = ServerClient.Init(Server.Address, Server.Port);
         clientTest.SendReady();
+    }
+
+    public void ready()
+    {
+
+        client.SendReady();
     }
 
     // Update is called once per frame

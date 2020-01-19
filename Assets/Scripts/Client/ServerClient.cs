@@ -21,7 +21,7 @@ namespace Assets.Scripts.Client
         public HpAdded HpAddedSignal { get; set; }
         public DamageDone DamageDoneSignal { get; set; }
         public GameOver GameOverSignal { get; set; }
-        public PlayerInitialized PlayerInitializedSignal { get; set; }
+        [Inject] public PlayerInitialized PlayerInitializedSignal { get; set; }
 
         private int? _curClientId;
 

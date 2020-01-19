@@ -43,8 +43,10 @@ namespace KPI.GalconClone.ClientC
     
         protected override void mapBindings() {
             base.mapBindings();
- 
+
+            commandBinder.Bind<PlayerInitialized>().To<RenderMenuCommand>();
             commandBinder.Bind<MapGenerated>().To<RenderMapCommand>();
+            
         }
 
         public override void Launch() {
