@@ -37,6 +37,8 @@ namespace KPI.GalconClone.ClientC
             injectionBinder.Bind<UnitLayoutStore>().ToSingleton();
             injectionBinder.Bind<PlayerTable>().ToSingleton();
 
+            injectionBinder.Bind<ServerToClientCoordinateTranslator>().ToSingleton();
+
             // Bind communication with server
             injectionBinder.Bind<TcpClient>().To(new TcpClient(Server.Address, Server.Port));
             injectionBinder.Bind<ServerClient>().ToSingleton();

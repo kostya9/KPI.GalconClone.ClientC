@@ -15,6 +15,9 @@ namespace Assets.Scripts
         private const string TriangleObjectName = "Triangle";
 
         [Inject]
+        public ServerToClientCoordinateTranslator Translator { get; set; }
+
+        [Inject]
         public MapContent Map { get; set; }
 
         [Inject]
@@ -73,18 +76,15 @@ namespace Assets.Scripts
                 return;
             }
 
-            var serverScreen = new Vector2(1920, 960);
-            var clientScreen = new Vector2(gameCanvas.pixelRect.width, gameCanvas.pixelRect.height);
+            Translator.ClientResolution = new Vector2(gameCanvas.pixelRect.width, gameCanvas.pixelRect.height);
 
-            var planetWidth = clientScreen.y / 12;
-            var scaleFactor = clientScreen / serverScreen;
-            var delta = serverScreen / 2;
+            var planetWidth = Translator.ClientResolution.y / 12;
 
             foreach (var planet in layout)
             {
                 var copy = GameObject.Instantiate(planetBlueprint, game.transform);
                 var transform = (copy.transform as RectTransform);
-                transform.position = scaleFactor * (planet.Position + delta);
+                transform.position = Translator.ToClient(planet.Position);
                 transform.sizeDelta = new Vector2(planetWidth, planetWidth);
                 var script = copy.GetComponent<PlanetView>();
                 script.SetPlanet(planet);

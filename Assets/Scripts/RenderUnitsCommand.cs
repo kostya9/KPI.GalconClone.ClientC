@@ -7,11 +7,15 @@ using System.Linq;
 using UnityEngine;
 using System.Reflection;
 using System.Collections.Generic;
+using Assets.Scripts.GuiExtensions;
 
 namespace Assets.Scripts
 {
     class RenderUnitsCommand : Command
     {
+        [Inject]
+        public ServerToClientCoordinateTranslator Translator { get; set; }
+
         [Inject]
         public PlanetSelectedArgs Units { get; set; }
 
@@ -45,10 +49,12 @@ namespace Assets.Scripts
                 {
                     Debug.LogError("Error: planet hasn't been found");
                 }
+
                 foreach (int unit_id in kvp.Value)
                 {
                     //Debug.Log("Created unit id: " + unit_id);
-                    unitsLayout.addUnit(unit_id, new Unit(unit_id, ownerPlanet.Owner, ownerPlanet.Position));
+                    var coords = Translator.ToClient(ownerPlanet.Position);
+                    unitsLayout.addUnit(unit_id, new Unit(unit_id, ownerPlanet.Owner, coords));
                 }
             }
             
@@ -77,8 +83,9 @@ namespace Assets.Scripts
                 var copy = GameObject.Instantiate(triangleBlueprint, gameTransform); //, spaceTransform
                 copy.name = "Unit" + unitKeyValue.Key;
                 var transform = (copy.transform as RectTransform);
-                copy.transform.position = new Vector2(unitKeyValue.Value.Position.x + rand.Next(100), unitKeyValue.Value.Position.y);
-                transform.sizeDelta = new Vector2(100, 100);
+                var pos = new Vector2(unitKeyValue.Value.Position.x + rand.Next(100), unitKeyValue.Value.Position.y);
+                transform.position = VectorHelper.To2DWorldPosition(pos);
+                transform.sizeDelta = new Vector2(15, 15);
                 var script = copy.GetComponent<UnitView>();
                 if(script == null)
                 {
