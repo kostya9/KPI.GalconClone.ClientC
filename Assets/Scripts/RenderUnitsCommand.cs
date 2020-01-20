@@ -56,6 +56,8 @@ namespace Assets.Scripts
                     var coords = Translator.ToClient(ownerPlanet.Position);
                     unitsLayout.addUnit(unit_id, new Unit(unit_id, ownerPlanet.Owner, coords));
                 }
+
+                ownerPlanet.UnitsCount -= kvp.Value.Length;
             }
             
             UnitsStore.SetUnitLayout(unitsLayout);
@@ -80,7 +82,7 @@ namespace Assets.Scripts
             var rand = new System.Random();
             foreach (KeyValuePair<int, Unit> unitKeyValue in unitsLayout._units)
             {
-                var copy = GameObject.Instantiate(triangleBlueprint, gameTransform); //, spaceTransform
+                var copy = GameObject.Instantiate(triangleBlueprint, gameTransform);
                 copy.name = "Unit" + unitKeyValue.Key;
                 var transform = (copy.transform as RectTransform);
                 var pos = new Vector2(unitKeyValue.Value.Position.x + rand.Next(100), unitKeyValue.Value.Position.y);
@@ -112,14 +114,7 @@ namespace Assets.Scripts
                 }
             }
 
-            //GameObject.Destroy(space);
-
-            //triangleBlueprint.SetActive(false);
-            /*
-            GameObject game = GameObject.Find("Game");
-            Canvas canvas = game.GetComponent<Canvas>();
-            canvas.worldCamera = Camera.main;
-            */
+            triangleBlueprint.SetActive(false);
         }
 
         private GameObject GetGameGO()

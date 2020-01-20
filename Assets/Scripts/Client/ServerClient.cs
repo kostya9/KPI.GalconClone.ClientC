@@ -18,7 +18,7 @@ namespace Assets.Scripts.Client
         public PlayerReady PlayerReadySignal { get; set; }
         [Inject] public PlanetSelected PlanetSelectedSignal { get; set; }
         public UnitMoved UnitMovedSignal { get; set; }
-        public HpAdded HpAddedSignal { get; set; }
+        [Inject] public HpAdded HpAddedSignal { get; set; }
         public DamageDone DamageDoneSignal { get; set; }
         public GameOver GameOverSignal { get; set; }
         public PlayerInitialized PlayerInitializedSignal { get; set; }

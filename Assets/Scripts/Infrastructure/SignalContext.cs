@@ -49,6 +49,7 @@ namespace KPI.GalconClone.ClientC
  
             commandBinder.Bind<MapGenerated>().To<RenderMapCommand>();
             commandBinder.Bind<PlanetSelected>().To<RenderUnitsCommand>();
+            commandBinder.Bind<HpAdded>().To<AddHpCommand>();
         }
 
         public override void Launch() {
