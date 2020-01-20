@@ -67,14 +67,14 @@ namespace Assets.Scripts
             }
             if (triangleBlueprint == null)
                 Debug.LogError("Error: triangleBlueprint is null");
-            GameObject space = GameObject.Find("Space");
-            
-            var spaceTransform = space.transform;
+            GameObject game = GetGameGO();
+
+            var gameTransform = game.transform;
 
             var rand = new System.Random();
             foreach (KeyValuePair<int, Unit> unitKeyValue in unitsLayout._units)
             {
-                var copy = GameObject.Instantiate(triangleBlueprint, spaceTransform); //, spaceTransform
+                var copy = GameObject.Instantiate(triangleBlueprint, gameTransform); //, spaceTransform
                 copy.name = "Unit" + unitKeyValue.Key;
                 var transform = (copy.transform as RectTransform);
                 copy.transform.position = new Vector2(unitKeyValue.Value.Position.x + rand.Next(100), unitKeyValue.Value.Position.y);
@@ -115,12 +115,12 @@ namespace Assets.Scripts
             */
         }
 
-        // not used. For getting a JsonProperty name
-        public static string GetFields(System.Type modelType)
+        private GameObject GetGameGO()
         {
-            return string.Join("", modelType.GetProperties()
-                .Select(p => p.GetCustomAttribute<JsonPropertyAttribute>())
-                .Select(jp => jp.PropertyName));
+            return UnityEngine.SceneManagement.SceneManager
+                .GetActiveScene()
+                .GetRootGameObjects()
+                .First(go => go.name.StartsWith("Game"));
         }
     }
 }
