@@ -10,7 +10,7 @@ namespace Assets.Scripts
     class MoveUnitCommand : Command
     {
         [Inject]
-        public UnitMovedArgs args { get; }
+        public UnitMovedArgs args { get; set; }
 
         [Inject]
         public UnitLayoutStore UnitsStore { get; set; }
