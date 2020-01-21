@@ -7,7 +7,7 @@ namespace KPI.GalconClone.ClientC
     {
         public static GameObject GetDirectChildByName(this GameObject go, string targetName)
         {
-            foreach (var transform in go.GetComponentsInChildren<Transform>())
+            foreach (var transform in go.GetComponentsInChildren<Transform>(true))
             {
                 var child = transform.gameObject;
                 if (child.name == targetName)

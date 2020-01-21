@@ -8,24 +8,64 @@ namespace KPI.GalconClone.ClientC
     public class PlanetLayout : IEnumerable<Planet>
     {
         private readonly Dictionary<int, Planet> _planets;
+        public bool startAttackFlag { get; set; }
+        public int? attackGoalId { get; set; } // bad variable
 
         public PlanetLayout(IEnumerable<Planet> planets)
         {
             _planets = planets.ToDictionary(p => p.Id);
+            startAttackFlag = false;
+        }
+
+        public IEnumerable<Planet> GetPlanetOfPlayer(int playerId)
+        {
+            return this.Where(p => p.Owner?.Id == playerId);
+        }
+
+        public List<int> getSelectedIds()
+        {
+            List<int> planetIds = new List<int>();
+            foreach (var planet in _planets.Values)
+            {
+                if (planet.Selected == true)
+                {
+                    planetIds.Add(planet.Id);
+                }
+            }
+            return planetIds;
         }
 
         public void SelectSingle(int id)
         {
             foreach (var planet in _planets.Values)
             {
-                planet.Selected = planet.Id == id;
+                if (planet.Id == id)
+                {
+                    if (null != planet.Owner)
+                    {
+                        if (planet.Owner.Id == Constants.CURRENT_PLAYER_ID)
+                        {
+                            planet.Selected = true;
+                            break;
+                        }
+                    }
+                    startAttackFlag = true;
+                    attackGoalId = id;
+                    break;
+                }
             }
         }
         
         public void SelectMultiple(int id)
         {
-            var planet = Find(id); 
-            planet.Selected = !planet.Selected;
+            var planet = Find(id);
+            if (null != planet.Owner)
+            {
+                if (planet.Owner.Id == Constants.CURRENT_PLAYER_ID)
+                {
+                    planet.Selected = !planet.Selected;
+                }
+            }
         }
 
         public void UnselectAll()
@@ -33,6 +73,21 @@ namespace KPI.GalconClone.ClientC
             foreach (var planet in _planets.Values)
             {
                 planet.Selected = false;
+            }
+        }
+
+        public Planet getAttackPlanet()
+        {
+            if (attackGoalId == null)
+            {
+                Debug.LogError("attackGoalId is null");
+                return null;
+            }
+            else
+            {
+                Planet toReturn = Find((int)attackGoalId);
+                attackGoalId = null;
+                return toReturn;
             }
         }
 

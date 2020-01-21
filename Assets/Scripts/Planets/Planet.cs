@@ -23,7 +23,7 @@ namespace KPI.GalconClone.ClientC
 
         public Vector2 Position { get; }
         public PlanetType Type { get; }
-        public int UnitsCount { get; }
+        public int UnitsCount { get; set; }
         public bool Selected { get; set; }
     }
 }
