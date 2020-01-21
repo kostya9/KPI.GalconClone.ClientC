@@ -47,10 +47,16 @@ namespace KPI.GalconClone.ClientC
         protected override void mapBindings() {
             base.mapBindings();
  
+            // Server commands
             commandBinder.Bind<MapGenerated>().To<RenderMapCommand>();
             commandBinder.Bind<PlanetSelected>().To<RenderUnitsCommand>();
             commandBinder.Bind<HpAdded>().To<AddHpCommand>();
             commandBinder.Bind<UnitMoved>().To<MoveUnitCommand>();
+            
+
+            // Client internal commands
+            commandBinder.Bind<MoveUnitInitiated>().To<InitiateMoveUnits>();
+            commandBinder.Bind<AppHpInitiated>().To<InitiateAddHpCommand>();
         }
 
         public override void Launch() {

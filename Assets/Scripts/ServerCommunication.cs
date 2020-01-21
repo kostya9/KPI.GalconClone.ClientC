@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Timers;
+using Assets.Scripts;
 
 public class ServerCommunication : BaseView
 {
@@ -12,12 +13,15 @@ public class ServerCommunication : BaseView
 
     [Inject]
     public ServerClient client { get; set; }
-    
-    [Inject]
-    public PlanetLayoutStore Store { get; set; }
 
     [Inject]
-    public UnitLayoutStore UnitsStore { get; set; }
+    public AppHpInitiated AppHpInitiated { get; set; }
+
+    [Inject]
+    public MoveUnitInitiated MoveUnitInitiated { get; set; }
+
+    [Inject]
+    public PlanetLayoutStore Store { get; set; }
 
     private static Timer aTimer;
     private static Timer mTimer;
@@ -56,21 +60,6 @@ public class ServerCommunication : BaseView
             pl.startAttackFlag = false;
         }
         
-        if (hpUpEventFlag)
-        {
-            foreach (Planet planet in pl)
-            {
-                if (planet.Owner != null)
-                {
-                    if (planet.Owner.Id == Constants.CURRENT_PLAYER_ID)
-                    {
-                        //client.SendAddHp(planet.Id);
-                    }
-                }
-            }
-            hpUpEventFlag = false;
-        }
-        
     }
 
     private void startAddHpTimer()
@@ -91,39 +80,16 @@ public class ServerCommunication : BaseView
         mTimer.Enabled = true; // start the timer
     }
 
-    private static void AddHpOnTimedEvent(System.Object source, System.Timers.ElapsedEventArgs e)
+    private void AddHpOnTimedEvent(object source, ElapsedEventArgs e)
     {
+        AppHpInitiated.Dispatch();
         Debug.Log("AddHp timer ticks");
-        hpUpEventFlag = true;
     }
 
     private void MoveOnTimedEvent(System.Object source, System.Timers.ElapsedEventArgs e)
     {
         Debug.Log("Move timer ticks");
-        var unitsLayout = UnitsStore.GetUnitLayout();
-        foreach (KeyValuePair<int, Unit> unitKeyValue in unitsLayout._units)
-        {
-            if (unitKeyValue.Value.Owner != null && unitKeyValue.Value.Owner.Id == Constants.CURRENT_PLAYER_ID)
-            {
-                Debug.Log("Here1");
-                GameObject obj = GameObject.Find("Unit" + unitKeyValue.Key);
-                Debug.Log("Here2");
-                if (obj != null)
-                {
-                    Debug.Log("Not null");
-                    UnitView uv = obj.GetComponent<UnitView>();
-                    uv.Move();
-                    Unit movingUnit = uv.GetUnit();
-                    client.SendMove(movingUnit.Id, movingUnit.Position.x, movingUnit.Position.y);
-                }
-                else
-                {
-                    Debug.LogError("Error: obj is null");
-                }
-                //unit.Value.Move();
-                Debug.Log("Unit: " + unitKeyValue.Value.Id + ", new Position: " + unitKeyValue.Value.Position);
-            }
-        }
+        MoveUnitInitiated.Dispatch();
     }
 
     /*

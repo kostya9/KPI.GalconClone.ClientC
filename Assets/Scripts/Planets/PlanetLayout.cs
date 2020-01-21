@@ -17,6 +17,11 @@ namespace KPI.GalconClone.ClientC
             startAttackFlag = false;
         }
 
+        public IEnumerable<Planet> GetPlanetOfPlayer(int playerId)
+        {
+            return this.Where(p => p.Owner?.Id == playerId);
+        }
+
         public List<int> getSelectedIds()
         {
             List<int> planetIds = new List<int>();
