@@ -71,6 +71,21 @@ namespace KPI.GalconClone.ClientC
             }
         }
 
+        public Planet getAttackPlanet()
+        {
+            if (attackGoalId == null)
+            {
+                Debug.LogError("attackGoalId is null");
+                return null;
+            }
+            else
+            {
+                Planet toReturn = Find((int)attackGoalId);
+                attackGoalId = null;
+                return toReturn;
+            }
+        }
+
         public Planet Find(int id)
         {
             if (_planets.TryGetValue(id, out var planet))

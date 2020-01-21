@@ -8,4 +8,5 @@ public static class Constants
 {
     public static int CURRENT_PLAYER_ID;
     public static int PERCENTAGE = 30;
+    public static float UNIT_SPEED = 10.0f;
 }

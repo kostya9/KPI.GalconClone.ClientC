@@ -17,7 +17,7 @@ namespace KPI.GalconClone.ClientC
             if(_layout == null)
             {
                 //throw new InvalidOperationException("The layout was not set, cannot get it");
-                Debug.Log("The layout was not set, cannot get it");
+                Debug.Log("PlanetLayoutStore: The layout was not set, cannot get it");
             }
 
             return _layout;

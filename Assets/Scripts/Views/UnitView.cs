@@ -5,7 +5,6 @@ using Assets.Scripts.GuiExtensions;
 
 namespace KPI.GalconClone.ClientC
 {
-    [RequireComponent(typeof(LineRenderer))]
     public class UnitView : BaseView
     {
         private Unit _unit;
@@ -13,21 +12,6 @@ namespace KPI.GalconClone.ClientC
         protected override void Start()
         {
             base.Start();
-
-            SetupSelectionTriangle();
-        }
-
-        private void SetupSelectionTriangle()
-        {
-            /*
-            var lineRenderer = GetComponent<LineRenderer>();
-            Material whiteDiffuseMat = new Material(Shader.Find("Unlit/Texture"));
-            //whiteDiffuseMat.SetTexture();
-            lineRenderer.material = whiteDiffuseMat;
-            lineRenderer.enabled = false;
-            
-            LineRendererHelper.DrawCircle(lineRenderer);
-            */
         }
 
         public void SetUnit(Unit unit)
@@ -35,8 +19,29 @@ namespace KPI.GalconClone.ClientC
             _unit = unit;
         }
 
+        public Unit GetUnit()
+        {
+            return _unit;
+        }
+
         private void Update()
         {
+            var imageComponent = GetComponent<UnityEngine.UI.Image>();
+
+            var owner = _unit.Owner;
+            if (owner != null)
+            {
+                if (owner.Color != imageComponent.color)
+                {
+                    imageComponent.color = owner.Color;
+                }
+            }
+        }
+
+        public void Move()
+        {
+            _unit.Move();
+            this.transform.position = _unit.Position;
         }
     }
 }
