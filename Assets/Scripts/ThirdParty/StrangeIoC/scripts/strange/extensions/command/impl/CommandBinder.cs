@@ -78,7 +78,7 @@ namespace strange.extensions.command.impl
 
 		public CommandBinder ()
 		{
-			usePooling = true;
+			usePooling = false;
 		}
 
 		public override IBinding GetRawBinding ()

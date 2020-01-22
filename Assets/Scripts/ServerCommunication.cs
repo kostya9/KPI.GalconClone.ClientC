@@ -31,11 +31,11 @@ public class ServerCommunication : BaseView
         base.Start();
         client.StartDispatchingEvents();
 
-        clientTest = ServerClient.Init(Server.Address, Server.Port);
-        clientTest.SendReady();
+        //clientTest = ServerClient.Init(Server.Address, Server.Port);
+        //clientTest.SendReady();
 
-        client.SendRendered();
-        clientTest.SendRendered();
+
+        //clientTest.SendRendered();
         
         startAddHpTimer();
         startMoveTimer();
@@ -50,7 +50,7 @@ public class ServerCommunication : BaseView
     // Update is called once per frame
     void Update()
     {
-        PlanetLayout pl = Store.GetPlanetLayout();
+        PlanetLayout pl = Store?.GetPlanetLayout();
         if (pl != null && pl.startAttackFlag)
         {
             List<int> planetIds = pl.getSelectedIds();

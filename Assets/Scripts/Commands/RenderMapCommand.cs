@@ -26,6 +26,9 @@ namespace Assets.Scripts
         [Inject]
         public PlayerTable Players { get; set; }
 
+        [Inject]
+        public ServerClient Client { get; set; }
+
         private Planet ToPlanet(MapUnit u)
         {
             var coords = new Vector2(u.Coords.X, u.Coords.Y);
@@ -100,6 +103,8 @@ namespace Assets.Scripts
 
             var menu = GetMenuGO();
             GameObject.Destroy(menu);
+
+            Client.SendRendered();
 
             Debug.Log("Game loaded.");
         }
