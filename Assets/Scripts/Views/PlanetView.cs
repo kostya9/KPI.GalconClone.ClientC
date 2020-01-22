@@ -109,6 +109,7 @@ namespace KPI.GalconClone.ClientC
             _rectTransform = transform as RectTransform;
             var newSize = GetSize(_planet, _rectTransform.sizeDelta.x);
             _rectTransform.sizeDelta = new Vector2(newSize, newSize);
+            _planet.Radius = newSize / 2;
         }
 
         private float GetSize(Planet planet, float initialSize)

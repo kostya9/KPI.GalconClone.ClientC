@@ -16,10 +16,10 @@ namespace Assets.Scripts.Client
         [Inject] public MapGenerated MapGeneratedSignal { get; set; }
         public GameStarted GameStartedSignal { get; set; }
         public PlayerReady PlayerReadySignal { get; set; }
-        public PlanetSelected PlanetSelectedSignal { get; set; }
-        public UnitMoved UnitMovedSignal { get; set; }
-        public HpAdded HpAddedSignal { get; set; }
-        public DamageDone DamageDoneSignal { get; set; }
+        [Inject] public PlanetSelected PlanetSelectedSignal { get; set; }
+        [Inject] public UnitMoved UnitMovedSignal { get; set; }
+        [Inject] public HpAdded HpAddedSignal { get; set; }
+        [Inject] public DamageDone DamageDoneSignal { get; set; }
         public GameOver GameOverSignal { get; set; }
         [Inject] public PlayerInitialized PlayerInitializedSignal { get; set; }
 
@@ -94,9 +94,9 @@ namespace Assets.Scripts.Client
                 {
                     var args = jobject.ToObject<PlayerInitializedArgs>();
                     _curClientId = args.Id;
+                    Constants.CURRENT_PLAYER_ID = args.Id;
                     PlayerInitializedSignal?.Dispatch(args);
-                }
-                break;
+                } break;
                 case "ready":
                 {
                     var args = jobject.ToObject<PlayerReadyArgs>();
@@ -104,7 +104,6 @@ namespace Assets.Scripts.Client
                 } break;
                 case "select":
                 {
-                    
                     var args = jobject.ToObject<PlanetSelectedArgs>();
                     PlanetSelectedSignal?.Dispatch(args);
                 } break;
@@ -112,8 +111,7 @@ namespace Assets.Scripts.Client
                 {
                     var args = jobject.ToObject<UnitMovedArgs>();
                     UnitMovedSignal?.Dispatch(args);
-                }
-                break;
+                } break;
                 case "add_hp":
                 {
                     var args = jobject.ToObject<HpAddedArgs>();
@@ -123,8 +121,7 @@ namespace Assets.Scripts.Client
                 {
                     var args = jobject.ToObject<DamageDoneArgs>();
                     DamageDoneSignal?.Dispatch(args);
-                }
-                break;
+                } break;
                 case "gameover":
                 {
                     var args = jobject.ToObject<GameOverArgs>();
@@ -177,7 +174,6 @@ namespace Assets.Scripts.Client
             {
                 _writer.Write(bytes.Length);
                 _writer.Write(bytes);
-                _writer.Flush();
             }
             LogSent(serialized);
         }

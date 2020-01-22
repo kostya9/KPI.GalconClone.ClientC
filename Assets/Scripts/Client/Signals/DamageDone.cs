@@ -9,12 +9,16 @@ namespace Assets.Scripts.Client
 
     public class DamageDoneArgs
     {
+        [JsonProperty(PropertyName = "planet_change")]
         public PlanetChange PlanetChange { get; set; }
+
+        [JsonProperty(PropertyName = "unit_id")]
+        public int UnitId { get; set; }
     }
 
     public class PlanetChange
     {
-        [JsonProperty(PropertyName = "planet_id")]
+        [JsonProperty(PropertyName = "id")]
         public int PlanetId { get; set; }
 
         [JsonProperty(PropertyName = "units_count")]
