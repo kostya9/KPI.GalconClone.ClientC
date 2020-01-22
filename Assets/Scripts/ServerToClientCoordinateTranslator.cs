@@ -15,5 +15,13 @@ namespace Assets.Scripts
 
             return scaleFactor * (serverCoords + delta);
         }
+
+        public Vector2 ToServer(Vector2 clientCoords)
+        {
+            var scaleFactor = ClientResolution / _serverResolution;
+            var delta = _serverResolution / 2;
+
+            return clientCoords / scaleFactor - delta;
+        }
     }
 }

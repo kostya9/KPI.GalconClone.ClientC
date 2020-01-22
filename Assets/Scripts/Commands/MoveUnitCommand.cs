@@ -13,14 +13,14 @@ namespace Assets.Scripts
         public UnitMovedArgs args { get; set; }
 
         [Inject]
-        public UnitLayoutStore UnitsStore { get; set; }
+        public ServerToClientCoordinateTranslator Translator { get; set; }
 
         [Inject]
         public ServerClient client { get; set; }
 
         public override void Execute()
         {
-            Vector2 newPosition = new Vector2(args.X, args.Y);
+            Vector2 newPosition = Translator.ToClient(new Vector2(args.X, args.Y));
 
             GameObject obj = GameObject.Find("Unit" + args.UnitId);
             if (obj != null)
@@ -53,6 +53,9 @@ namespace Assets.Scripts
         [Inject]
         public ServerClient Client { get; set; }
 
+        [Inject]
+        public ServerToClientCoordinateTranslator Translator { get; set; }
+        
         public override void Execute()
         {
             var unitsLayout = UnitsStore.GetUnitLayout();
@@ -60,7 +63,7 @@ namespace Assets.Scripts
             {
                 if (unitKeyValue.Value.Owner != null && unitKeyValue.Value.Owner.Id == Constants.CURRENT_PLAYER_ID)
                 {
-                    Vector2 newPosition = unitKeyValue.Value.getNewPosition();
+                    Vector2 newPosition = Translator.ToServer(unitKeyValue.Value.getNewPosition());
                     Client.SendMove(unitKeyValue.Value.Id, newPosition.x, newPosition.y);
                     Debug.Log("Given: Unit: " + unitKeyValue.Value.Id + ", old Position: " + unitKeyValue.Value.Position + ", new Position: " + newPosition);
                 }

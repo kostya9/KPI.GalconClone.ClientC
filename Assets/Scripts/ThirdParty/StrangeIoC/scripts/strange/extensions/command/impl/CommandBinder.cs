@@ -184,10 +184,13 @@ namespace strange.extensions.command.impl
 			}
 			else
 			{
-				injectionBinder.Bind<ICommand> ().To (type);
-				ICommand command = injectionBinder.GetInstance<ICommand> ();
-				injectionBinder.Unbind<ICommand> ();
-				return command;
+                lock (injectionBinder)
+                {
+                    injectionBinder.Bind<ICommand>().To(type);
+                    ICommand command = injectionBinder.GetInstance<ICommand>();
+                    injectionBinder.Unbind<ICommand>();
+                    return command;
+                }
 			}
 		}
 

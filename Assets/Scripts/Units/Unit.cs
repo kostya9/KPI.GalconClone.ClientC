@@ -8,9 +8,6 @@ using System;
 
 public class Unit
 {
-    [Inject]
-    public ServerToClientCoordinateTranslator Translator { get; }
-
     public Unit(int id, Player owner, Vector2 position)
     {
         Position = position;
