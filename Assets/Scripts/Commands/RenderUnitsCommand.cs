@@ -97,7 +97,7 @@ namespace Assets.Scripts
                 var copy = GameObject.Instantiate(triangleBlueprint, gameTransform);
                 copy.name = "Unit" + unit.Id;
                 var transform = (copy.transform as RectTransform);
-                var pos = Translator.ToClient(unit.Position);
+                var pos = unit.Position;
                 //var pos = new Vector2(unitKeyValue.Value.Position.x + rand.Next(100), unitKeyValue.Value.Position.y);
                 transform.position = VectorHelper.To2DWorldPosition(pos);
                 transform.sizeDelta = new Vector2(15, 15);
