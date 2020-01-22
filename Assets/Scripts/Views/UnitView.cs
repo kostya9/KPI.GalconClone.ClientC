@@ -38,10 +38,10 @@ namespace KPI.GalconClone.ClientC
             }
         }
 
-        public void Move()
+        public void Move(Vector2 newPosition)
         {
-            _unit.Move();
-            this.transform.position = _unit.Position;
+            _unit.Position = newPosition;
+            this.transform.position = VectorHelper.To2DWorldPosition(_unit.Position);
         }
     }
 }

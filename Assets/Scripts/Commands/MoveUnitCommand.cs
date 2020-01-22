@@ -15,9 +15,35 @@ namespace Assets.Scripts
         [Inject]
         public UnitLayoutStore UnitsStore { get; set; }
 
+        [Inject]
+        public ServerClient client { get; set; }
+
         public override void Execute()
         {
-            // args.X, args.Y, args.UnitId
+            Vector2 newPosition = new Vector2(args.X, args.Y);
+            Debug.Log("Got: Unit: " + args.UnitId + ", new Position: " + newPosition);
+
+            GameObject obj = GameObject.Find("Unit" + args.UnitId);
+            if (obj != null)
+            {
+                Debug.Log("Unit obj is not null");
+                UnitView uv = obj.GetComponent<UnitView>();
+                uv.Move(newPosition);
+
+                // damage condition
+                Unit currentUnit = uv.GetUnit();
+                if (currentUnit.Destination != null)
+                {
+                    if (currentUnit.checkCollision())
+                    {
+                        client.SendDamage(currentUnit.Destination.Id, currentUnit.Id);
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("Error: obj is null");
+            }
         }
     }
 
@@ -36,23 +62,9 @@ namespace Assets.Scripts
             {
                 if (unitKeyValue.Value.Owner != null && unitKeyValue.Value.Owner.Id == Constants.CURRENT_PLAYER_ID)
                 {
-                    Debug.Log("Here1");
-                    GameObject obj = GameObject.Find("Unit" + unitKeyValue.Key);
-                    Debug.Log("Here2");
-                    if (obj != null)
-                    {
-                        Debug.Log("Not null");
-                        UnitView uv = obj.GetComponent<UnitView>();
-                        uv.Move();
-                        Unit movingUnit = uv.GetUnit();
-                        Client.SendMove(movingUnit.Id, movingUnit.Position.x, movingUnit.Position.y);
-                    }
-                    else
-                    {
-                        Debug.LogError("Error: obj is null");
-                    }
-                    //unit.Value.Move();
-                    Debug.Log("Unit: " + unitKeyValue.Value.Id + ", new Position: " + unitKeyValue.Value.Position);
+                    Vector2 newPosition = unitKeyValue.Value.getNewPosition();
+                    Client.SendMove(unitKeyValue.Value.Id, newPosition.x, newPosition.y);
+                    Debug.Log("Given: Unit: " + unitKeyValue.Value.Id + ", old Position: " + unitKeyValue.Value.Position + ", new Position: " + newPosition);
                 }
             }
         }

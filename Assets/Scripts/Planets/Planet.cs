@@ -19,7 +19,7 @@ namespace KPI.GalconClone.ClientC
         public int Id { get; }
 
         [CanBeNull]
-        public Player Owner { get; }
+        public Player Owner { get; set; }
 
         public Vector2 Position { get; }
         public PlanetType Type { get; }

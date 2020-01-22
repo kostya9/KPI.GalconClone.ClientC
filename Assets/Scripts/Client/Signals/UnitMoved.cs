@@ -13,9 +13,9 @@ namespace Assets.Scripts.Client
         public int UnitId { get; set; }
 
         [JsonProperty(PropertyName = "x")]
-        public double X { get; set; }
+        public float X { get; set; }
 
         [JsonProperty(PropertyName = "y")]
-        public double Y { get; set; }
+        public float Y { get; set; }
     }
 }

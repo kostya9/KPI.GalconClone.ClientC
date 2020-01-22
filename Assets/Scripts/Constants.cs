@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 public static class Constants
 {
     public static int CURRENT_PLAYER_ID;
-    public static int PERCENTAGE = 30;
-    public static float UNIT_SPEED = 10.0f;
+    public readonly static int PERCENTAGE = 30;
+    public readonly static float UNIT_SPEED = 10.0f;
+    public readonly static int ADD_HP_INTERVAL = 3000;
+    public readonly static int MOVE_INTERVAL = 2000;
+    public readonly static double UNIT_ANGLE_IN_RADIANS = Math.PI / 6.0;
+    public readonly static float UNIT_RADIUS = 30;
+    public readonly static float PLANET_RADIUS = 5;
 }

@@ -52,7 +52,7 @@ namespace KPI.GalconClone.ClientC
             commandBinder.Bind<PlanetSelected>().To<RenderUnitsCommand>();
             commandBinder.Bind<HpAdded>().To<AddHpCommand>();
             commandBinder.Bind<UnitMoved>().To<MoveUnitCommand>();
-            
+            commandBinder.Bind<DamageDone>().To<DamagePlanetCommand>();
 
             // Client internal commands
             commandBinder.Bind<MoveUnitInitiated>().To<InitiateMoveUnits>();
