@@ -174,7 +174,6 @@ namespace Assets.Scripts.Client
             {
                 _writer.Write(bytes.Length);
                 _writer.Write(bytes);
-                _writer.Flush();
             }
             LogSent(serialized);
         }

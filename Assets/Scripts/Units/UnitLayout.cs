@@ -18,5 +18,10 @@ namespace KPI.GalconClone.ClientC
         {
             _units.Add(unit_id, unit);
         }
+
+        public void RemoveUnit(int unitId)
+        {
+            _units.Remove(unitId);
+        }
     }
 }

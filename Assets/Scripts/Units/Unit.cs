@@ -53,6 +53,6 @@ public class Unit
 
     public bool checkCollision()
     {
-        return Math.Pow(Position.x - DestinationPos.x, 2) + Math.Pow(Position.y - DestinationPos.y, 2) <= Math.Pow(Constants.PLANET_RADIUS, 2);
+        return Math.Pow(Position.x - DestinationPos.x, 2) + Math.Pow(Position.y - DestinationPos.y, 2) <= Math.Pow(Destination.Radius, 2);
     }
 }

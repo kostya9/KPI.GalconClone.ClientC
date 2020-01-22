@@ -3,18 +3,22 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Assets.Scripts.GuiExtensions;
+using UnityEngine.Experimental.PlayerLoop;
 
 namespace KPI.GalconClone.ClientC
 {
     public class UnitView : BaseView
     {
         private Unit _unit;
-        private float _journeyLength;
         private float _elapsedTime;
         private Vector3 _startingPos;
+        private static float TOTAL_MOVE_TIME = Constants.MOVE_INTERVAL / 1000;
+        private Vector3 _targetPos;
 
         public void SetUnit(Unit unit)
         {
+            _startingPos = VectorHelper.To2DWorldPosition(unit.Position);
+            _targetPos = VectorHelper.To2DWorldPosition(unit.Position);
             _unit = unit;
         }
 
@@ -35,12 +39,13 @@ namespace KPI.GalconClone.ClientC
                     imageComponent.color = owner.Color;
                 }
             }
+        }
 
-            _elapsedTime += Time.deltaTime;
-            var total = Constants.MOVE_INTERVAL / 1000;
-            var t = _elapsedTime / total;
-
-            transform.position = Vector3.Lerp(_startingPos, VectorHelper.To2DWorldPosition(_unit.Position), t);
+        private void FixedUpdate()
+        {
+            _elapsedTime += Time.fixedDeltaTime;
+            var t = _elapsedTime / TOTAL_MOVE_TIME;
+            transform.position = Vector3.Lerp(_startingPos, _targetPos, t);
         }
 
         public void Move(Vector2 newPosition)
@@ -48,6 +53,7 @@ namespace KPI.GalconClone.ClientC
             _elapsedTime = 0;
             _unit.Position = newPosition;
             _startingPos = transform.position;
+            _targetPos = VectorHelper.To2DWorldPosition(newPosition);
         }
     }
 }

@@ -21,12 +21,10 @@ namespace Assets.Scripts
         public override void Execute()
         {
             Vector2 newPosition = new Vector2(args.X, args.Y);
-            Debug.Log("Got: Unit: " + args.UnitId + ", new Position: " + newPosition);
 
             GameObject obj = GameObject.Find("Unit" + args.UnitId);
             if (obj != null)
             {
-                Debug.Log("Unit obj is not null");
                 UnitView uv = obj.GetComponent<UnitView>();
                 uv.Move(newPosition);
 

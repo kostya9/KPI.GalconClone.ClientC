@@ -24,6 +24,9 @@ namespace Assets.Scripts
         [Inject]
         public PlayerTable Players { get; set; }
 
+        [Inject]
+        public UnitLayoutStore Store { get; set; }
+
         public override void Execute()
         {
             Planet target = PlanetsStore.GetPlanetLayout().Find(args.PlanetChange.PlanetId);
@@ -32,6 +35,11 @@ namespace Assets.Scripts
             {
                 target.Owner = Players.getPlayersById((int)args.PlanetChange.Owner);
             }
+
+                
+            GameObject obj = GameObject.Find("Unit" + args.UnitId);
+            GameObject.Destroy(obj);
+            Store.GetUnitLayout().RemoveUnit(args.UnitId);
         }
     }
 }

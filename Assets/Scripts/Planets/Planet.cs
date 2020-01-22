@@ -25,5 +25,6 @@ namespace KPI.GalconClone.ClientC
         public PlanetType Type { get; }
         public int UnitsCount { get; set; }
         public bool Selected { get; set; }
+        public double Radius { get; set; }
     }
 }

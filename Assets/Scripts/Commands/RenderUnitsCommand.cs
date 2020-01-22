@@ -35,6 +35,7 @@ namespace Assets.Scripts
             if (unitsLayout == null)
             {
                 unitsLayout = new UnitLayout();
+                UnitsStore.SetUnitLayout(unitsLayout);
             }
 
             PlanetLayout planetsLayout = PlanetsStore.GetPlanetLayout();
@@ -44,6 +45,7 @@ namespace Assets.Scripts
 
             bool IsCurrentPlayerUnits = false;
 
+            var added = new List<Unit>();
             foreach(KeyValuePair<string, int[]> kvp in units)
             {
                 Planet ownerPlanet = planetsLayout.Find(System.Convert.ToInt32(kvp.Key));
@@ -60,6 +62,7 @@ namespace Assets.Scripts
                     Unit newUnit = new Unit(unit_id, ownerPlanet.Owner, ownerPlanetClientCoords);
                     newUnit.setRoundPosition(currentAngle, Constants.UNIT_RADIUS, ownerPlanetClientCoords);
                     unitsLayout.addUnit(unit_id, newUnit);
+                    added.Add(newUnit);
                     currentAngle += Constants.UNIT_ANGLE_IN_RADIANS;
                 }
 
@@ -70,8 +73,6 @@ namespace Assets.Scripts
 
                 ownerPlanet.UnitsCount -= kvp.Value.Length;
             }
-            
-            UnitsStore.SetUnitLayout(unitsLayout);
 
             // creating triangle
             GameObject[] objs = Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[];
@@ -91,12 +92,12 @@ namespace Assets.Scripts
             var gameTransform = game.transform;
             
             var rand = new System.Random();
-            foreach (KeyValuePair<int, Unit> unitKeyValue in unitsLayout._units)
+            foreach (var unit in added)
             {
                 var copy = GameObject.Instantiate(triangleBlueprint, gameTransform);
-                copy.name = "Unit" + unitKeyValue.Key;
+                copy.name = "Unit" + unit.Id;
                 var transform = (copy.transform as RectTransform);
-                var pos = unitKeyValue.Value.Position;
+                var pos = Translator.ToClient(unit.Position);
                 //var pos = new Vector2(unitKeyValue.Value.Position.x + rand.Next(100), unitKeyValue.Value.Position.y);
                 transform.position = VectorHelper.To2DWorldPosition(pos);
                 transform.sizeDelta = new Vector2(15, 15);
@@ -107,7 +108,7 @@ namespace Assets.Scripts
                 }
                 else
                 {
-                    script.SetUnit(unitKeyValue.Value);
+                    script.SetUnit(unit);
                     script.enabled = true;
                     copy.SetActive(true);
                 }
@@ -116,13 +117,13 @@ namespace Assets.Scripts
             if (IsCurrentPlayerUnits)
             {
                 Planet destinationPlanet = planetsLayout.getAttackPlanet();
-                foreach (KeyValuePair<int, Unit> unitKeyValue in unitsLayout._units)
+                foreach (var unit in added)
                 {
-                    if (unitKeyValue.Value.IsPlacedOnScene == false)
+                    if (unit.IsPlacedOnScene == false)
                     {
-                        unitKeyValue.Value.Destination = destinationPlanet;
-                        unitKeyValue.Value.DestinationPos = Translator.ToClient(destinationPlanet.Position);
-                        unitKeyValue.Value.IsPlacedOnScene = true;
+                        unit.Destination = destinationPlanet;
+                        unit.DestinationPos = Translator.ToClient(destinationPlanet.Position);
+                        unit.IsPlacedOnScene = true;
                     }
                 }
             }
