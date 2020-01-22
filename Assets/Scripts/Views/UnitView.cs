@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Assets.Scripts.GuiExtensions;
@@ -8,11 +9,9 @@ namespace KPI.GalconClone.ClientC
     public class UnitView : BaseView
     {
         private Unit _unit;
-
-        protected override void Start()
-        {
-            base.Start();
-        }
+        private float _journeyLength;
+        private float _elapsedTime;
+        private Vector3 _startingPos;
 
         public void SetUnit(Unit unit)
         {
@@ -36,12 +35,19 @@ namespace KPI.GalconClone.ClientC
                     imageComponent.color = owner.Color;
                 }
             }
+
+            _elapsedTime += Time.deltaTime;
+            var total = Constants.MOVE_INTERVAL / 1000;
+            var t = _elapsedTime / total;
+
+            transform.position = Vector3.Lerp(_startingPos, VectorHelper.To2DWorldPosition(_unit.Position), t);
         }
 
         public void Move(Vector2 newPosition)
         {
+            _elapsedTime = 0;
             _unit.Position = newPosition;
-            this.transform.position = VectorHelper.To2DWorldPosition(_unit.Position);
+            _startingPos = transform.position;
         }
     }
 }
