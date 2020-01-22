@@ -98,7 +98,18 @@ namespace Assets.Scripts
             GameObject.Destroy(planetBlueprint);
             gameCanvas.worldCamera = Camera.main;
 
+            var menu = GetMenuGO();
+            GameObject.Destroy(menu);
+
             Debug.Log("Game loaded.");
+        }
+
+        private GameObject GetMenuGO()
+        {
+            return UnityEngine.SceneManagement.SceneManager
+                .GetActiveScene()
+                .GetRootGameObjects()
+                .First(go => go.name.StartsWith("Menu"));
         }
     }
 }
