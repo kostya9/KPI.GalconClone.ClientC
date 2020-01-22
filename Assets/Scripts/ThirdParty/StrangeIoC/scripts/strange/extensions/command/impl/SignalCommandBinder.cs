@@ -56,6 +56,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using Assets.Scripts;
 using strange.extensions.command.api;
 using strange.extensions.injector.api;
 using strange.framework.api;
@@ -108,9 +110,18 @@ namespace strange.extensions.command.impl
 		private void executeCommandOnMain(ICommand command)
 		{
 			if(command != null)
-			{
-				CommandExecutor.ExecuteOnMainThread(command).GetAwaiter().GetResult();
-			}
+            {
+                var attr = command.GetType().GetCustomAttribute<UiCommandAttribute>();
+
+                if (attr != null)
+                {
+                    CommandExecutor.ExecuteOnMainThread(command).GetAwaiter().GetResult();
+				}
+                else
+                {
+					command.Execute();
+                }
+            }
 		}
 
 		/// Create a Command and bind its injectable parameters to the Signal types

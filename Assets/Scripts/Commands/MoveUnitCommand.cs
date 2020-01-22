@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Assets.Scripts.Client;
 using strange.extensions.command.impl;
 using KPI.GalconClone.ClientC;
@@ -7,6 +8,7 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
+    [UiCommand]
     class MoveUnitCommand : Command
     {
         [Inject]
@@ -16,16 +18,18 @@ namespace Assets.Scripts
         public ServerToClientCoordinateTranslator Translator { get; set; }
 
         [Inject]
+        public UnitLayoutStore Units { get; set; }
+
+        [Inject]
         public ServerClient client { get; set; }
 
         public override void Execute()
         {
             Vector2 newPosition = Translator.ToClient(new Vector2(args.X, args.Y));
 
-            GameObject obj = GameObject.Find("Unit" + args.UnitId);
-            if (obj != null)
+            if (Units.GetUnitLayout()._units.TryGetValue(args.UnitId, out var unit))
             {
-                UnitView uv = obj.GetComponent<UnitView>();
+                UnitView uv = unit.UnitGO.GetComponent<UnitView>();
                 uv.Move(newPosition);
 
                 // damage condition
@@ -55,7 +59,7 @@ namespace Assets.Scripts
 
         [Inject]
         public ServerToClientCoordinateTranslator Translator { get; set; }
-        
+
         public override void Execute()
         {
             var unitsLayout = UnitsStore.GetUnitLayout();

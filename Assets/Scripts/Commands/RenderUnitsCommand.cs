@@ -8,9 +8,11 @@ using UnityEngine;
 using System.Reflection;
 using System.Collections.Generic;
 using Assets.Scripts.GuiExtensions;
+using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
+    [UiCommandAttribute]
     class RenderUnitsCommand : Command
     {
         [Inject]
@@ -87,6 +89,7 @@ namespace Assets.Scripts
             }
             if (triangleBlueprint == null)
                 Debug.LogError("Error: triangleBlueprint is null");
+            triangleBlueprint.GetComponent<Image>().raycastTarget = false;
             GameObject game = GetGameGO();
 
             var gameTransform = game.transform;
@@ -95,6 +98,7 @@ namespace Assets.Scripts
             foreach (var unit in added)
             {
                 var copy = GameObject.Instantiate(triangleBlueprint, gameTransform);
+                unit.UnitGO = copy;
                 copy.name = "Unit" + unit.Id;
                 var transform = (copy.transform as RectTransform);
                 var pos = unit.Position;

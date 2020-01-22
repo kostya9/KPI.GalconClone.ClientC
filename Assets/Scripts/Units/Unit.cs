@@ -29,6 +29,9 @@ public class Unit
 
     public Vector2 DestinationPos { get; set; }
 
+    // Please dont harm me for this
+    public GameObject UnitGO { get; set; }
+
     public Vector2 getNewPosition()
     {
         Vector3 destinationPos = DestinationPos;

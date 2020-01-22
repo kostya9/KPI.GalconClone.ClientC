@@ -13,6 +13,7 @@ using Assets.Scripts.Players;
 
 namespace Assets.Scripts
 {
+    [UiCommand]
     class DamagePlanetCommand : Command
     {
         [Inject]

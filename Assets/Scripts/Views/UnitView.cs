@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Assets.Scripts.GuiExtensions;
 using UnityEngine.Experimental.PlayerLoop;
+using UnityEngine.UI;
 
 namespace KPI.GalconClone.ClientC
 {
@@ -14,11 +15,13 @@ namespace KPI.GalconClone.ClientC
         private Vector3 _startingPos;
         private static float TOTAL_MOVE_TIME = Constants.MOVE_INTERVAL / 1000;
         private Vector3 _targetPos;
+        private UnityEngine.UI.Image _image;
 
         public void SetUnit(Unit unit)
         {
             _startingPos = VectorHelper.To2DWorldPosition(unit.Position);
             _targetPos = VectorHelper.To2DWorldPosition(unit.Position);
+            _image = GetComponent<Image>();
             _unit = unit;
         }
 
@@ -29,14 +32,12 @@ namespace KPI.GalconClone.ClientC
 
         private void Update()
         {
-            var imageComponent = GetComponent<UnityEngine.UI.Image>();
-
             var owner = _unit.Owner;
             if (owner != null)
             {
-                if (owner.Color != imageComponent.color)
+                if (owner.Color != _image.color)
                 {
-                    imageComponent.color = owner.Color;
+                    _image.color = owner.Color;
                 }
             }
         }

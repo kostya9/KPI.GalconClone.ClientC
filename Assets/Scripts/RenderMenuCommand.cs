@@ -1,12 +1,9 @@
-﻿using Assets.Scripts.Client;
-using Assets.Scripts.Players;
-using KPI.GalconClone.ClientC;
-using strange.extensions.command.impl;
-using System.Linq;
+﻿using strange.extensions.command.impl;
 using UnityEngine;
 
 namespace Assets.Scripts
 {
+    [UiCommand]
     public class RenderMenuCommand : Command
     {
         private const string Path = "Prefabs/Menu";

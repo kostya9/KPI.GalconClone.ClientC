@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
+    [UiCommandAttribute]
     public class RenderMapCommand : Command
     {
         private const string Path = "Prefabs/Game";
