@@ -52,11 +52,15 @@ namespace Assets.Scripts
                     Debug.LogError("Error: planet hasn't been found");
                 }
 
+                double currentAngle = 0;
                 foreach (int unit_id in kvp.Value)
                 {
                     //Debug.Log("Created unit id: " + unit_id);
-                    var coords = Translator.ToClient(ownerPlanet.Position);
-                    unitsLayout.addUnit(unit_id, new Unit(unit_id, ownerPlanet.Owner, coords));
+                    Vector2 ownerPlanetClientCoords = Translator.ToClient(ownerPlanet.Position);
+                    Unit newUnit = new Unit(unit_id, ownerPlanet.Owner, ownerPlanetClientCoords);
+                    newUnit.setRoundPosition(currentAngle, Constants.UNIT_RADIUS, ownerPlanetClientCoords);
+                    unitsLayout.addUnit(unit_id, newUnit);
+                    currentAngle += Constants.UNIT_ANGLE_IN_RADIANS;
                 }
 
                 if (ownerPlanet.Owner.Id == Constants.CURRENT_PLAYER_ID)
@@ -92,7 +96,8 @@ namespace Assets.Scripts
                 var copy = GameObject.Instantiate(triangleBlueprint, gameTransform);
                 copy.name = "Unit" + unitKeyValue.Key;
                 var transform = (copy.transform as RectTransform);
-                var pos = new Vector2(unitKeyValue.Value.Position.x + rand.Next(100), unitKeyValue.Value.Position.y);
+                var pos = unitKeyValue.Value.Position;
+                //var pos = new Vector2(unitKeyValue.Value.Position.x + rand.Next(100), unitKeyValue.Value.Position.y);
                 transform.position = VectorHelper.To2DWorldPosition(pos);
                 transform.sizeDelta = new Vector2(15, 15);
                 var script = copy.GetComponent<UnitView>();
@@ -116,6 +121,7 @@ namespace Assets.Scripts
                     if (unitKeyValue.Value.IsPlacedOnScene == false)
                     {
                         unitKeyValue.Value.Destination = destinationPlanet;
+                        unitKeyValue.Value.DestinationPos = Translator.ToClient(destinationPlanet.Position);
                         unitKeyValue.Value.IsPlacedOnScene = true;
                     }
                 }

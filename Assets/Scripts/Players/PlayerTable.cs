@@ -32,5 +32,10 @@ namespace Assets.Scripts.Players
         {
             return _colors[id % _colors.Length];
         }
+
+        public Player getPlayersById(int id)
+        {
+            return _players.FirstOrDefault(x => x.Key == id).Value;
+        }
     }
 }

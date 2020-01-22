@@ -25,7 +25,6 @@ public class ServerCommunication : BaseView
 
     private static Timer aTimer;
     private static Timer mTimer;
-    public static bool hpUpEventFlag;
 
     protected override void Start()
     {
@@ -39,7 +38,6 @@ public class ServerCommunication : BaseView
         client.SendRendered();
         clientTest.SendRendered();
         
-        hpUpEventFlag = false;
         startAddHpTimer();
         startMoveTimer();
     }
@@ -54,7 +52,6 @@ public class ServerCommunication : BaseView
             if (planetIds.Count != 0)
             {
                 client.SendSelect(planetIds.ToArray(), Constants.PERCENTAGE);
-                //client.SendAddHp(planetIds.ToArray()[0]); // to test 'addHp' work
             }
             pl.UnselectAll();
             pl.startAttackFlag = false;
@@ -65,7 +62,7 @@ public class ServerCommunication : BaseView
     private void startAddHpTimer()
     {
         aTimer = new System.Timers.Timer();
-        aTimer.Interval = 3000;
+        aTimer.Interval = Constants.ADD_HP_INTERVAL;
         aTimer.Elapsed += AddHpOnTimedEvent;
         aTimer.AutoReset = true; // Have the timer fire repeated events (true is the default)
         aTimer.Enabled = true; // start the timer
@@ -74,40 +71,21 @@ public class ServerCommunication : BaseView
     private void startMoveTimer()
     {
         mTimer = new System.Timers.Timer();
-        mTimer.Interval = 1000;
+        mTimer.Interval = Constants.MOVE_INTERVAL;
         mTimer.Elapsed += MoveOnTimedEvent;
-        mTimer.AutoReset = true; // Have the timer fire repeated events (true is the default)
-        mTimer.Enabled = true; // start the timer
+        mTimer.AutoReset = true;
+        mTimer.Enabled = true;
     }
 
     private void AddHpOnTimedEvent(object source, ElapsedEventArgs e)
     {
+        //Debug.Log("AddHp timer ticks");
         AppHpInitiated.Dispatch();
-        Debug.Log("AddHp timer ticks");
     }
 
     private void MoveOnTimedEvent(System.Object source, System.Timers.ElapsedEventArgs e)
     {
-        Debug.Log("Move timer ticks");
+        //Debug.Log("Move timer ticks");
         MoveUnitInitiated.Dispatch();
     }
-
-    /*
-     * better realization of OnTimedEvent, needs to be tested
-    private void OnTimedEvent(System.Object source, System.Timers.ElapsedEventArgs e)
-    {
-        Debug.Log("Timer is here");
-        PlanetLayout pl = Store.GetPlanetLayout();
-        foreach (Planet planet in pl)
-        {
-            if (planet.Owner != null)
-            {
-                if (planet.Owner.Id == Constants.CURRENT_PLAYER_ID)
-                {
-                    client.SendAddHp(planet.Id);
-                }
-            }
-        }
-    }
-    */
 }
