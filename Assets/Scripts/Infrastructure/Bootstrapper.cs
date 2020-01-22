@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Infrastructure;
 using strange.extensions.context.api;
 using strange.extensions.context.impl;
+using UnityEngine;
 
 namespace KPI.GalconClone.ClientC
 {
@@ -22,7 +23,8 @@ namespace KPI.GalconClone.ClientC
         
         // Start is called before the first frame update
         void Awake() 
-        {    
+        {
+            Application.runInBackground = true;
             this.context = new SignalContext(this, ContextStartupFlags.MANUAL_LAUNCH);
             context.Launch();
             context.AddView(this);
