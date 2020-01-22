@@ -11,7 +11,7 @@ namespace KPI.GalconClone.ClientC
         
         public void OnPointerClick(PointerEventData eventData)
         {
-            Store.GetPlanetLayout().UnselectAll();
+            Store?.GetPlanetLayout()?.UnselectAll();
         }
     }
 }
